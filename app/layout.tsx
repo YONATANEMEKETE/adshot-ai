@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Nunito_Sans, Lora } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import SectionWrapper from "@/components/shared/SectionWrapper";
 
 const loraHeading = Lora({subsets:['latin'],variable:'--font-heading'});
 
@@ -32,7 +33,11 @@ export default function RootLayout({
       lang="en"
       className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", nunitoSans.variable, loraHeading.variable)}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full w-full bg-background text-foreground">
+        <SectionWrapper className="flex min-h-full flex-col">
+          {children}
+        </SectionWrapper>
+      </body>
     </html>
   );
 }
