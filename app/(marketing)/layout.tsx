@@ -27,9 +27,9 @@ export default function MarketingLayout({
           { href: '/#pricing', label: 'Pricing' },
           { href: '/#resources', label: 'Resources' },
         ]}
-        signInHref="/sign-in"
+        signInHref="/auth"
         signInLabel="Sign In"
-        signUpHref="/sign-up"
+        signUpHref="/auth"
         signUpLabel="Get Started"
       />
       <main>{children}</main>

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { RiArrowRightLine } from '@remixicon/react';
 
 import Logo from '@/components/shared/Logo';
 import { buttonVariants } from '@/components/ui/button-variants';
@@ -75,9 +76,7 @@ export default function MarketingNavbar({
             )}
           >
             <span>{signUpLabel}</span>
-            <span aria-hidden="true" className="font-normal">
-              -&gt;
-            </span>
+            <RiArrowRightLine aria-hidden="true" className="size-4" />
           </Link>
         </div>
       </div>
