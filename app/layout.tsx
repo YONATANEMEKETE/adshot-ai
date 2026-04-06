@@ -1,21 +1,17 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono, Nunito_Sans, Lora } from 'next/font/google';
+import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import SectionWrapper from '@/components/shared/SectionWrapper';
 
-const loraHeading = Lora({ subsets: ['latin'], variable: '--font-heading' });
-
-const nunitoSans = Nunito_Sans({ subsets: ['latin'], variable: '--font-sans' });
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const fontSans = Inter({
   subsets: ['latin'],
+  variable: '--font-sans',
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const fontMono = JetBrains_Mono({
   subsets: ['latin'],
+  variable: '--font-mono',
 });
 
 export const metadata: Metadata = {
@@ -34,11 +30,9 @@ export default function RootLayout({
       className={cn(
         'h-full',
         'antialiased',
-        geistSans.variable,
-        geistMono.variable,
+        fontSans.variable,
+        fontMono.variable,
         'font-sans',
-        nunitoSans.variable,
-        loraHeading.variable,
       )}
     >
       <body className="min-h-full h-full w-full bg-background text-foreground">

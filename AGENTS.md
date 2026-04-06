@@ -1,3 +1,8 @@
+---
+description: 
+alwaysApply: true
+---
+
 # 🤖 AdShot AI - AI Agent Development Guidelines
 
 > **Purpose:** This file is the single source of truth for all AI coding agents working on AdShot AI. Strictly follow these rules to maintain consistency, performance, accessibility, and alignment with the product's design system and architecture.
