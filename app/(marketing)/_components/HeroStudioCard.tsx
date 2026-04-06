@@ -66,19 +66,27 @@ export default function HeroStudioCard() {
       <Ripple />
 
       {/* Center Logo */}
-      <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 border border-border bg-background p-2 shadow-sm">
+      <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 border border-border bg-background p-2 shadow-sm rounded-sm">
         <Logo size={46} aria-hidden="true" />
       </div>
 
       {/* Floating Cards mapped around the center */}
-      {featureNodes.map(({ label, icon: Icon, className, x, y }) => (
+      {featureNodes.map(({ label, icon: Icon, className, x, y }, i) => (
         <div
           key={label}
-          className={`absolute z-10 inline-flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 rounded-sm border border-border px-3 py-2 text-xs font-medium shadow-lg ${className}`}
+          className="absolute z-10 -translate-x-1/2 -translate-y-1/2"
           style={{ left: `${x}%`, top: `${y}%` }}
         >
-          <Icon aria-hidden="true" className="size-3.5 text-primary" />
-          <span className="whitespace-nowrap">{label}</span>
+          <div
+            className={`inline-flex items-center gap-2 rounded-sm border border-border px-3 py-2 text-xs font-medium shadow-lg animate-float ${className}`}
+            style={{
+              animationDelay: `${i * 0.7}s`,
+              '--float-duration': `${5 + (i % 3)}s`,
+            } as React.CSSProperties}
+          >
+            <Icon aria-hidden="true" className="size-3.5 text-primary" />
+            <span className="whitespace-nowrap">{label}</span>
+          </div>
         </div>
       ))}
     </div>
