@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { motion, useReducedMotion } from 'motion/react';
 import { RiArrowRightLine } from '@remixicon/react';
 
 import SectionWrapper from '@/components/shared/SectionWrapper';
@@ -59,6 +62,71 @@ const pricingTiers: PricingTier[] = [
 ];
 
 export default function PricingSection() {
+  const prefersReducedMotion = useReducedMotion();
+  const shouldAnimate = !prefersReducedMotion;
+  const introAnimation = shouldAnimate
+    ? {
+        initial: 'hidden' as const,
+        whileInView: 'visible' as const,
+        viewport: { once: true, amount: 0.35 },
+        variants: {
+          hidden: {},
+          visible: {
+            transition: {
+              staggerChildren: 0.1,
+              delayChildren: 0.06,
+            },
+          },
+        },
+      }
+    : {};
+  const itemAnimation = shouldAnimate
+    ? {
+        variants: {
+          hidden: { opacity: 0, y: 18 },
+          visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+              duration: 0.5,
+              ease: [0.22, 1, 0.36, 1] as const,
+            },
+          },
+        },
+      }
+    : {};
+  const cardsAnimation = shouldAnimate
+    ? {
+        initial: 'hidden' as const,
+        whileInView: 'visible' as const,
+        viewport: { once: true, amount: 0.2 },
+        variants: {
+          hidden: {},
+          visible: {
+            transition: {
+              staggerChildren: 0.14,
+              delayChildren: 0.08,
+            },
+          },
+        },
+      }
+    : {};
+  const cardItemAnimation = shouldAnimate
+    ? {
+        variants: {
+          hidden: { opacity: 0, y: 24 },
+          visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+              duration: 0.55,
+              ease: [0.22, 1, 0.36, 1] as const,
+            },
+          },
+        },
+      }
+    : {};
+
   return (
     <section
       id="pricing"
@@ -68,17 +136,20 @@ export default function PricingSection() {
       <div className="absolute left-1/2 top-16 -z-10 h-44 w-[min(64rem,88vw)] -translate-x-1/2 rounded-full bg-primary/7 blur-3xl" />
 
       <SectionWrapper>
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)] lg:items-start">
-          <div className="max-w-3xl">
+        <motion.div
+          className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)] lg:items-start"
+          {...introAnimation}
+        >
+          <motion.div className="max-w-3xl" {...itemAnimation}>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
               Pricing Tiers
             </p>
             <h2 className="mt-3 max-w-3xl text-balance text-[2rem] font-sans font-bold leading-[1.02] tracking-tight text-foreground sm:text-[2.75rem] lg:text-[3.5rem]">
               Subscription pricing with crystal clear limits.
             </h2>
-          </div>
+          </motion.div>
 
-          <div className="max-w-md lg:justify-self-end">
+          <motion.div className="max-w-md lg:justify-self-end" {...itemAnimation}>
             <p className="text-[0.95rem] leading-6 text-muted-foreground sm:text-base">
               Start free, upgrade when you need faster output, sharper exports,
               and usage rights built for shipping creative work every day.
@@ -90,14 +161,19 @@ export default function PricingSection() {
               Start Free
               <RiArrowRightLine aria-hidden="true" className="size-4" />
             </Link>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
-        <div className="mt-16 grid gap-4 lg:grid-cols-[0.9fr_1.35fr]">
+        <motion.div
+          className="mt-16 grid gap-4 lg:grid-cols-[0.9fr_1.35fr]"
+          {...cardsAnimation}
+        >
           {pricingTiers.map((tier) => (
-            <PricingCard key={tier.name} tier={tier} />
+            <motion.div key={tier.name} {...cardItemAnimation}>
+              <PricingCard tier={tier} />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </SectionWrapper>
     </section>
   );
