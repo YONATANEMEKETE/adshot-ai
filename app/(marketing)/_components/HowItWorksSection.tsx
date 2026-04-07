@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { motion, useReducedMotion } from 'motion/react';
 import {
   RiGalleryView2,
   RiImageAddLine,
@@ -85,6 +88,71 @@ const steps: HowItWorksCardProps[] = [
 ];
 
 export default function HowItWorksSection() {
+  const prefersReducedMotion = useReducedMotion();
+  const shouldAnimate = !prefersReducedMotion;
+  const containerAnimation = shouldAnimate
+    ? {
+        initial: 'hidden' as const,
+        whileInView: 'visible' as const,
+        viewport: { once: true, amount: 0.35 },
+        variants: {
+          hidden: {},
+          visible: {
+            transition: {
+              staggerChildren: 0.1,
+              delayChildren: 0.06,
+            },
+          },
+        },
+      }
+    : {};
+  const itemAnimation = shouldAnimate
+    ? {
+        variants: {
+          hidden: { opacity: 0, y: 18 },
+          visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+              duration: 0.5,
+              ease: [0.22, 1, 0.36, 1] as const,
+            },
+          },
+        },
+      }
+    : {};
+  const cardsContainerAnimation = shouldAnimate
+    ? {
+        initial: 'hidden' as const,
+        whileInView: 'visible' as const,
+        viewport: { once: true, amount: 0.2 },
+        variants: {
+          hidden: {},
+          visible: {
+            transition: {
+              staggerChildren: 0.12,
+              delayChildren: 0.08,
+            },
+          },
+        },
+      }
+    : {};
+  const cardItemAnimation = shouldAnimate
+    ? {
+        variants: {
+          hidden: { opacity: 0, y: 22 },
+          visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+              duration: 0.55,
+              ease: [0.22, 1, 0.36, 1] as const,
+            },
+          },
+        },
+      }
+    : {};
+
   return (
     <section
       id="how-it-works"
@@ -94,29 +162,41 @@ export default function HowItWorksSection() {
       <div className="absolute inset-x-0 top-16 -z-10 mx-auto h-64 w-[min(72rem,92vw)] rounded-full bg-primary/6 blur-3xl" />
 
       <div className="mx-auto max-w-7xl">
-        <div className="max-w-[44rem]">
-          <div className="inline-flex items-center gap-2 rounded-sm border border-border bg-background/90 px-3 py-1 text-xs font-medium text-muted-foreground shadow-xs backdrop-blur">
+        <motion.div className="max-w-[44rem]" {...containerAnimation}>
+          <motion.div
+            className="inline-flex items-center gap-2 rounded-sm border border-border bg-background/90 px-3 py-1 text-xs font-medium text-muted-foreground shadow-xs backdrop-blur"
+            {...itemAnimation}
+          >
             <RiSparkling2Line
               aria-hidden="true"
               className="size-3.5 text-primary"
             />
             <span>How it Works</span>
-          </div>
+          </motion.div>
 
-          <h2 className="mt-4 max-w-3xl text-balance text-[2.25rem] font-sans font-bold leading-[1.08] tracking-tight text-foreground sm:text-[2.7rem] lg:text-[3.35rem]">
+          <motion.h2
+            className="mt-4 max-w-3xl text-balance text-[2.25rem] font-sans font-bold leading-[1.08] tracking-tight text-foreground sm:text-[2.7rem] lg:text-[3.35rem]"
+            {...itemAnimation}
+          >
             Turn one product photo
             <br />
             <span className="bg-linear-to-r from-primary via-chart-3 to-chart-2 bg-clip-text text-transparent">
               into campaign-ready assets.
             </span>
-          </h2>
+          </motion.h2>
 
-          <p className="mt-4 max-w-lg text-balance text-sm leading-6 text-muted-foreground sm:text-base">
+          <motion.p
+            className="mt-4 max-w-lg text-balance text-sm leading-6 text-muted-foreground sm:text-base"
+            {...itemAnimation}
+          >
             Upload your product, guide the creative direction, and generate
             polished lifestyle visuals without organizing a studio shoot.
-          </p>
+          </motion.p>
 
-          <div className="mt-6 flex flex-col items-start gap-3 sm:flex-row">
+          <motion.div
+            className="mt-6 flex flex-col items-start gap-3 sm:flex-row"
+            {...itemAnimation}
+          >
             <Link
               href="/auth"
               className={cn(
@@ -136,36 +216,48 @@ export default function HowItWorksSection() {
             >
               View Demo
             </Link>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
-        <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:hidden">
-          <div>
+        <motion.div
+          className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:hidden"
+          {...cardsContainerAnimation}
+        >
+          <motion.div {...cardItemAnimation}>
             <HowItWorksCard {...steps[0]} />
-          </div>
+          </motion.div>
 
-          <div>
+          <motion.div {...cardItemAnimation}>
             <HowItWorksCard {...steps[1]} />
-          </div>
+          </motion.div>
 
-          <div>
+          <motion.div {...cardItemAnimation}>
             <HowItWorksCard {...steps[2]} />
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
-        <div className="relative mt-8 hidden min-h-[36rem] pt-5 lg:block lg:pt-20 xl:min-h-[42rem] xl:pt-32">
-          <div className="w-[calc((100%-4rem)/3)]">
+        <motion.div
+          className="relative mt-8 hidden min-h-[36rem] lg:block lg:pt-20 xl:min-h-[42rem] xl:pt-32"
+          {...cardsContainerAnimation}
+        >
+          <motion.div className="w-[calc((100%-4rem)/3)]" {...cardItemAnimation}>
             <HowItWorksCard {...steps[0]} />
-          </div>
+          </motion.div>
 
-          <div className="absolute left-[calc(33.333%+1rem)] top-[-.25rem] w-[calc((100%-4rem)/3)]">
+          <motion.div
+            className="absolute left-[calc(33.333%+1rem)] top-[-.25rem] w-[calc((100%-4rem)/3)]"
+            {...cardItemAnimation}
+          >
             <HowItWorksCard {...steps[1]} />
-          </div>
+          </motion.div>
 
-          <div className="absolute right-0 top-[-6rem] w-[calc((100%-4rem)/3)]">
+          <motion.div
+            className="absolute right-0 top-[-6rem] w-[calc((100%-4rem)/3)]"
+            {...cardItemAnimation}
+          >
             <HowItWorksCard {...steps[2]} />
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );
