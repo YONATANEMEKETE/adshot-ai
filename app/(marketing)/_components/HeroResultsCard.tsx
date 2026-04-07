@@ -12,11 +12,12 @@ export default function HeroResultsCard() {
   return (
     <article className="relative flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card p-6 shadow-sm">
       <div className="z-10">
-        <h2 className="text-balance text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+        <h2 className="text-balance text-xl font-sans font-bold tracking-tight text-foreground sm:text-2xl">
           Publish across <br /> all your channels
         </h2>
         <p className="mt-3 max-w-[85%] text-sm text-muted-foreground leading-relaxed">
-          Export campaign-ready assets perfectly sized for your store, social media, and ads.
+          Export campaign-ready assets perfectly sized for your store, social
+          media, and ads.
         </p>
       </div>
 

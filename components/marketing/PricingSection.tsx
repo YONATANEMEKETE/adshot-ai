@@ -73,7 +73,7 @@ export default function PricingSection() {
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
               Pricing Tiers
             </p>
-            <h2 className="mt-3 max-w-3xl text-balance text-[2rem] font-bold leading-[1.02] tracking-tight text-foreground sm:text-[2.75rem] lg:text-[3.5rem]">
+            <h2 className="mt-3 max-w-3xl text-balance text-[2rem] font-sans font-bold leading-[1.02] tracking-tight text-foreground sm:text-[2.75rem] lg:text-[3.5rem]">
               Subscription pricing with crystal clear limits.
             </h2>
           </div>

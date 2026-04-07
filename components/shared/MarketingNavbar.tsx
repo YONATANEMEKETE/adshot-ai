@@ -48,7 +48,7 @@ export default function MarketingNavbar({
               <li key={item.label}>
                 <Link
                   href={item.href}
-                  className="text-sm font-medium text-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 lg:text-base"
+                  className="text-sm font-mono font-medium text-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 lg:text-base"
                 >
                   {item.label}
                 </Link>

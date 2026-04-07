@@ -43,11 +43,11 @@ export default function FooterCTA() {
 
           {/* Main Copy */}
           <div className="flex flex-col items-center gap-3 sm:gap-4">
-            <h2 className="text-center text-3xl font-bold tracking-tight text-primary-foreground/90 sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
+            <h2 className="text-center text-3xl font-sans font-bold tracking-tight text-primary-foreground/90 sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
               Turn One Product Photo
             </h2>
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-6">
-              <span className="text-3xl font-bold tracking-tight text-primary-foreground sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
+              <span className="text-3xl font-sans font-bold tracking-tight text-primary-foreground sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
                 Into Campaign-Ready Assets
               </span>
               <Link

@@ -105,7 +105,7 @@ export default function HowItWorksCard({
 
       {/* Bottom half text */}
       <div className="flex flex-col items-center px-5 pb-6 pt-5 text-center">
-        <h3 className="text-base font-bold tracking-tight text-foreground sm:text-[1.05rem]">
+        <h3 className="text-base font-sans font-bold tracking-tight text-foreground sm:text-[1.05rem]">
           {title}
         </h3>
         <p className="mt-2.5 max-w-[15rem] text-sm leading-5.5 text-muted-foreground">

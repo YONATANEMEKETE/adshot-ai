@@ -20,7 +20,7 @@ export default function HeroSection() {
             <span>Professional lifestyle assets in seconds</span>
           </div>
 
-          <h1 className="mt-5 max-w-6xl text-balance font-bold tracking-tight text-foreground leading-[1.05] text-4xl sm:text-5xl lg:text-7xl">
+          <h1 className="mt-5 max-w-6xl text-balance font-sans font-bold tracking-tight text-foreground leading-[1.05] text-4xl sm:text-5xl lg:text-7xl">
             Turn Product Photos into Pro Ad Creatives in Seconds
           </h1>
 

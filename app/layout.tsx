@@ -32,7 +32,7 @@ export default function RootLayout({
         'antialiased',
         fontSans.variable,
         fontMono.variable,
-        'font-sans',
+        'font-mono',
       )}
     >
       <body className="min-h-full h-full w-full bg-background text-foreground">

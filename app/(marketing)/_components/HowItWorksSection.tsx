@@ -100,10 +100,10 @@ export default function HowItWorksSection() {
               aria-hidden="true"
               className="size-3.5 text-primary"
             />
-            <span>Explore Features</span>
+            <span>How it Works</span>
           </div>
 
-          <h2 className="mt-4 max-w-3xl text-balance text-[2.25rem] font-bold leading-[1.08] tracking-tight text-foreground sm:text-[2.7rem] lg:text-[3.35rem]">
+          <h2 className="mt-4 max-w-3xl text-balance text-[2.25rem] font-sans font-bold leading-[1.08] tracking-tight text-foreground sm:text-[2.7rem] lg:text-[3.35rem]">
             Turn one product photo
             <br />
             <span className="bg-linear-to-r from-primary via-chart-3 to-chart-2 bg-clip-text text-transparent">

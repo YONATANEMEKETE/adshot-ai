@@ -48,7 +48,7 @@ export default function PricingCard({ tier }: { tier: PricingTier }) {
         ) : null}
 
         <div className="space-y-2.5">
-          <h3 className="text-2xl font-bold tracking-tight leading-none sm:text-[1.75rem]">
+          <h3 className="text-2xl font-sans font-bold tracking-tight leading-none sm:text-[1.75rem]">
             {tier.name}
           </h3>
           <p
