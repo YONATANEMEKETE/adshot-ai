@@ -1,8 +1,10 @@
 'use client';
 
+import type { MouseEvent } from 'react';
 import { useState } from 'react';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   RiArrowRightLine,
   RiCloseLine,
@@ -38,6 +40,36 @@ export default function MarketingNavbar({
   signUpLabel,
 }: MarketingNavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  const getNavLinkId = (label: string, variant: 'desktop' | 'mobile') =>
+    `marketing-nav-${variant}-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+
+  const handleNavItemClick = (
+    event: MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) => {
+    setIsMobileMenuOpen(false);
+
+    const isHashLink = href.startsWith('/#') || href.startsWith('#');
+    if (!isHashLink) {
+      return;
+    }
+
+    const hash = href.startsWith('/#') ? href.slice(2) : href.slice(1);
+    if (!hash || pathname !== '/') {
+      return;
+    }
+
+    const target = document.getElementById(hash);
+    if (!target) {
+      return;
+    }
+
+    event.preventDefault();
+    window.history.pushState(null, '', `/#${hash}`);
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   return (
     <header className="relative w-full bg-background">
@@ -59,7 +91,9 @@ export default function MarketingNavbar({
               <li key={item.label}>
                 <Link
                   href={item.href}
+                  id={getNavLinkId(item.label, 'desktop')}
                   className="text-sm font-mono font-medium text-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 lg:text-[0.95rem]"
+                  onClick={(event) => handleNavItemClick(event, item.href)}
                 >
                   {item.label}
                 </Link>
@@ -122,8 +156,9 @@ export default function MarketingNavbar({
                 <li key={item.label}>
                   <Link
                     href={item.href}
+                    id={getNavLinkId(item.label, 'mobile')}
                     className="flex items-center rounded-sm px-2 py-2 text-sm font-mono font-medium text-foreground transition-colors hover:bg-muted hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:text-[0.95rem]"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                    onClick={(event) => handleNavItemClick(event, item.href)}
                   >
                     {item.label}
                   </Link>

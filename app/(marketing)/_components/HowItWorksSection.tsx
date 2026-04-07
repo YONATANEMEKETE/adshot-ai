@@ -88,14 +88,14 @@ export default function HowItWorksSection() {
   return (
     <section
       id="how-it-works"
-      className="relative overflow-hidden px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-18"
+      className="relative scroll-mt-24 overflow-hidden px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-18"
     >
       <div className="absolute inset-0 -z-10 bg-linear-to-b from-background via-background to-muted/20" />
       <div className="absolute inset-x-0 top-16 -z-10 mx-auto h-64 w-[min(72rem,92vw)] rounded-full bg-primary/6 blur-3xl" />
 
       <div className="mx-auto max-w-7xl">
         <div className="max-w-[44rem]">
-          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background/90 px-3 py-1 text-xs font-medium text-muted-foreground shadow-xs backdrop-blur">
+          <div className="inline-flex items-center gap-2 rounded-sm border border-border bg-background/90 px-3 py-1 text-xs font-medium text-muted-foreground shadow-xs backdrop-blur">
             <RiSparkling2Line
               aria-hidden="true"
               className="size-3.5 text-primary"

@@ -62,7 +62,7 @@ export default function PricingSection() {
   return (
     <section
       id="pricing"
-      className="relative overflow-hidden px-4 sm:px-6 lg:px-8"
+      className="relative scroll-mt-24 overflow-hidden px-4 sm:px-6 lg:px-8"
     >
       <div className="absolute inset-0 -z-10 bg-linear-to-b from-muted/10 via-background to-background" />
       <div className="absolute left-1/2 top-16 -z-10 h-44 w-[min(64rem,88vw)] -translate-x-1/2 rounded-full bg-primary/7 blur-3xl" />
