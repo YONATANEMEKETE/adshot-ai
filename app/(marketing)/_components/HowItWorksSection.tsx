@@ -153,7 +153,7 @@ export default function HowItWorksSection() {
           </div>
         </div>
 
-        <div className="relative mt-8 hidden min-h-[39rem] pt-5 lg:block lg:pt-20 xl:min-h-[42rem] xl:pt-32">
+        <div className="relative mt-8 hidden min-h-[36rem] pt-5 lg:block lg:pt-20 xl:min-h-[42rem] xl:pt-32">
           <div className="w-[calc((100%-4rem)/3)]">
             <HowItWorksCard {...steps[0]} />
           </div>
