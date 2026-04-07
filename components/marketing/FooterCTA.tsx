@@ -46,7 +46,7 @@ export default function FooterCTA() {
             <h2 className="text-center text-3xl font-sans font-bold tracking-tight text-primary-foreground/90 sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
               Turn One Product Photo
             </h2>
-            <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-6">
+            <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:gap-6 sm:text-left">
               <span className="text-3xl font-sans font-bold tracking-tight text-primary-foreground sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
                 Into Campaign-Ready Assets
               </span>
@@ -92,7 +92,7 @@ export default function FooterCTA() {
           <Logo size={32} className="text-background" aria-hidden="true" />
           <span>AdShot AI</span>
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-center text-sm text-muted-foreground sm:text-left">
           © {new Date().getFullYear()} AdShot AI. All rights reserved.
         </p>
       </div>
