@@ -27,13 +27,13 @@ export default function HowItWorksCard({
   return (
     <article
       className={cn(
-        'group relative aspect-[4/4.25] overflow-hidden rounded-[calc(var(--radius)+1rem)] border border-border bg-card transition-transform duration-300',
-        'min-h-[19rem] sm:min-h-[21rem] lg:min-h-[22rem]',
+        'group relative overflow-hidden rounded-[calc(var(--radius)+1rem)] border border-border bg-card transition-transform duration-300',
+        'aspect-auto min-h-[22rem] max-[330px]:min-h-[24rem] sm:min-h-[23rem] md:min-h-[20rem] lg:aspect-[4/4.25] lg:min-h-[22rem]',
         cardClassName,
       )}
     >
       {/* Top half with grid */}
-      <div className="relative h-44 overflow-hidden border-b border-border bg-linear-to-b from-muted/30 to-background/50">
+      <div className="relative h-40 overflow-hidden border-b border-border bg-linear-to-b from-muted/30 to-background/50 max-[330px]:h-44 sm:h-44 md:h-40 lg:h-44">
         {/* Grid and Pattern Elements Wrapper */}
         <div
           className="absolute inset-0"
@@ -104,11 +104,11 @@ export default function HowItWorksCard({
       </div>
 
       {/* Bottom half text */}
-      <div className="flex flex-col items-center px-5 pb-6 pt-5 text-center">
+      <div className="flex flex-1 flex-col items-center px-4 pb-6 pt-5 text-center max-[330px]:px-[1.125rem] sm:px-5">
         <h3 className="text-base font-sans font-bold tracking-tight text-foreground sm:text-[1.05rem]">
           {title}
         </h3>
-        <p className="mt-2.5 max-w-[15rem] text-sm leading-5.5 text-muted-foreground">
+        <p className="mt-2.5 max-w-[15rem] text-sm leading-5.5 text-muted-foreground max-[330px]:max-w-[16rem]">
           {description}
         </p>
       </div>
