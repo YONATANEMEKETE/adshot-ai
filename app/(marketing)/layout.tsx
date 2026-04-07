@@ -22,10 +22,8 @@ export default function MarketingLayout({
         brandName="AdShot AI"
         homeHref="/"
         items={[
-          { href: '/#features', label: 'Features' },
           { href: '/#how-it-works', label: 'How It Works' },
           { href: '/#pricing', label: 'Pricing' },
-          { href: '/#resources', label: 'Resources' },
         ]}
         signInHref="/auth"
         signInLabel="Sign In"

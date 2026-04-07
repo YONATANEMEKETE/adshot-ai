@@ -17,7 +17,7 @@ export default function HeroSection() {
               aria-hidden="true"
               className="size-3.5 text-primary"
             />
-            <span>Reduce response time by 85%</span>
+            <span>Professional lifestyle assets in seconds</span>
           </div>
 
           <h1 className="mt-5 max-w-6xl text-balance font-bold tracking-tight text-foreground leading-[1.05] text-4xl sm:text-5xl lg:text-7xl">
