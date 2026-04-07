@@ -2,6 +2,7 @@
 
 import type { MouseEvent } from 'react';
 import { useState } from 'react';
+import { motion, useReducedMotion } from 'motion/react';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -41,6 +42,42 @@ export default function MarketingNavbar({
 }: MarketingNavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const prefersReducedMotion = useReducedMotion();
+  const desktopNavLinkClass =
+    'group/navlink relative inline-flex items-center overflow-hidden rounded-sm px-2 py-1.5 text-sm font-mono font-medium text-foreground transition-all duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 lg:text-[0.95rem] hover:-translate-y-0.5 hover:text-primary after:absolute after:bottom-0 after:left-2 after:right-2 after:h-px after:origin-left after:scale-x-0 after:bg-linear-to-r after:from-primary/20 after:via-primary after:to-chart-3/30 after:transition-transform after:duration-300 after:ease-out hover:after:scale-x-100';
+  const mobileNavLinkClass =
+    'group/navlink relative flex items-center overflow-hidden rounded-sm px-2 py-2 text-sm font-mono font-medium text-foreground transition-all duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:text-[0.95rem] hover:text-primary active:scale-[0.99]';
+  const shouldAnimate = !prefersReducedMotion;
+  const containerAnimation = shouldAnimate
+    ? {
+        initial: 'hidden' as const,
+        animate: 'visible' as const,
+        variants: {
+          hidden: {},
+          visible: {
+            transition: {
+              staggerChildren: 0.08,
+              delayChildren: 0.06,
+            },
+          },
+        },
+      }
+    : {};
+  const itemAnimation = shouldAnimate
+    ? {
+        variants: {
+          hidden: { opacity: 0, y: -8 },
+          visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+              duration: 0.4,
+              ease: [0.22, 1, 0.36, 1] as const,
+            },
+          },
+        },
+      }
+    : {};
 
   const getNavLinkId = (label: string, variant: 'desktop' | 'mobile') =>
     `marketing-nav-${variant}-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
@@ -73,8 +110,12 @@ export default function MarketingNavbar({
 
   return (
     <header className="relative w-full bg-background">
-      <div className="flex min-h-16 items-center justify-between gap-3 px-4 py-3 sm:min-h-18 sm:gap-5 sm:px-6 lg:px-8">
-        <Link
+      <motion.div
+        className="flex min-h-16 items-center justify-between gap-3 px-4 py-3 sm:min-h-18 sm:gap-5 sm:px-6 lg:px-8"
+        {...containerAnimation}
+      >
+        <motion.div {...itemAnimation}>
+          <Link
           href={homeHref}
           className="inline-flex items-center gap-2 sm:gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           onClick={() => setIsMobileMenuOpen(false)}
@@ -84,25 +125,26 @@ export default function MarketingNavbar({
             {brandName}
           </span>
         </Link>
+        </motion.div>
 
-        <nav aria-label="Primary" className="hidden md:block">
+        <motion.nav aria-label="Primary" className="hidden md:block" {...itemAnimation}>
           <ul className="flex items-center gap-6 lg:gap-8">
             {items.map((item) => (
               <li key={item.label}>
                 <Link
                   href={item.href}
                   id={getNavLinkId(item.label, 'desktop')}
-                  className="text-sm font-mono font-medium text-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 lg:text-[0.95rem]"
+                  className={desktopNavLinkClass}
                   onClick={(event) => handleNavItemClick(event, item.href)}
                 >
-                  {item.label}
+                  <span className="relative z-10">{item.label}</span>
                 </Link>
               </li>
             ))}
           </ul>
-        </nav>
+        </motion.nav>
 
-        <div className="flex items-center gap-2">
+        <motion.div className="flex items-center gap-2" {...itemAnimation}>
           <Link
             href={signInHref}
             className={cn(
@@ -122,7 +164,10 @@ export default function MarketingNavbar({
             onClick={() => setIsMobileMenuOpen(false)}
           >
             <span>{signUpLabel}</span>
-            <RiArrowRightLine aria-hidden="true" className="size-4" />
+            <RiArrowRightLine
+              aria-hidden="true"
+              className="size-4 transition-transform duration-200 ease-out group-hover/button:translate-x-0.5"
+            />
           </Link>
 
           <button
@@ -142,8 +187,8 @@ export default function MarketingNavbar({
               <RiMenuLine aria-hidden="true" className="size-4" />
             )}
           </button>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {isMobileMenuOpen ? (
         <div
@@ -157,10 +202,10 @@ export default function MarketingNavbar({
                   <Link
                     href={item.href}
                     id={getNavLinkId(item.label, 'mobile')}
-                    className="flex items-center rounded-sm px-2 py-2 text-sm font-mono font-medium text-foreground transition-colors hover:bg-muted hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:text-[0.95rem]"
+                    className={mobileNavLinkClass}
                     onClick={(event) => handleNavItemClick(event, item.href)}
                   >
-                    {item.label}
+                    <span className="relative z-10">{item.label}</span>
                   </Link>
                 </li>
               ))}
@@ -175,7 +220,10 @@ export default function MarketingNavbar({
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <span>{signUpLabel}</span>
-              <RiArrowRightLine aria-hidden="true" className="size-4" />
+              <RiArrowRightLine
+                aria-hidden="true"
+                className="size-4 transition-transform duration-200 ease-out group-hover/button:translate-x-0.5"
+              />
             </Link>
           </nav>
         </div>
