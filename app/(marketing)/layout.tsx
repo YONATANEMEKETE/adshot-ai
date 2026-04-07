@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import MarketingNavbar from '@/components/shared/MarketingNavbar';
+import FooterCTA from '@/components/marketing/FooterCTA';
 
 export const metadata: Metadata = {
   title: {
@@ -31,6 +32,7 @@ export default function MarketingLayout({
         signUpLabel="Get Started"
       />
       <main>{children}</main>
+      <FooterCTA />
     </>
   );
 }
