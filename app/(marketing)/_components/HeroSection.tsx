@@ -12,10 +12,10 @@ export default function HeroSection() {
     <section className="px-4 pb-8 pt-6 sm:px-6 lg:px-8 lg:pb-12">
       <div className="overflow-hidden rounded-xl border border-border bg-card">
         <div className="mx-auto flex max-w-6xl flex-col items-center px-6 pb-6 pt-10 text-center sm:px-10 lg:px-16 lg:pt-12">
-          <div className="inline-flex items-center gap-2 rounded-sm border border-border bg-background px-3 py-1 text-xs font-medium text-muted-foreground shadow-xs">
+          <div className="inline-flex items-center gap-1.5 rounded-sm border border-border bg-background px-2.5 py-1 text-[0.6875rem] font-medium text-muted-foreground shadow-xs sm:gap-2 sm:px-3 sm:text-xs">
             <RiSparkling2Line
               aria-hidden="true"
-              className="size-3.5 text-primary"
+              className="size-3 text-primary sm:size-3.5"
             />
             <span>Professional lifestyle assets in seconds</span>
           </div>
