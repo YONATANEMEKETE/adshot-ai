@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { motion, useReducedMotion } from 'motion/react';
 import { RiSparkling2Line } from '@remixicon/react';
 
 import GalleryImageCard from '@/components/marketing/GalleryImageCard';
@@ -84,6 +85,8 @@ const SIMULATED_LOADING_DELAY_MS = 900;
 
 export default function GalleryMasonrySection() {
   const [isLoading, setIsLoading] = useState(true);
+  const prefersReducedMotion = useReducedMotion();
+  const shouldAnimate = !prefersReducedMotion;
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -95,29 +98,88 @@ export default function GalleryMasonrySection() {
     };
   }, []);
 
+  const sectionAnimation = shouldAnimate
+    ? {
+        initial: { opacity: 0, y: 24 },
+        animate: {
+          opacity: 1,
+          y: 0,
+          transition: {
+            duration: 0.65,
+            ease: [0.22, 1, 0.36, 1] as const,
+          },
+        },
+      }
+    : {};
+  const headerAnimation = shouldAnimate
+    ? {
+        initial: 'hidden' as const,
+        animate: 'visible' as const,
+        variants: {
+          hidden: {},
+          visible: {
+            transition: {
+              staggerChildren: 0.1,
+              delayChildren: 0.08,
+            },
+          },
+        },
+      }
+    : {};
+  const headerItemAnimation = shouldAnimate
+    ? {
+        variants: {
+          hidden: { opacity: 0, y: 18 },
+          visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+              duration: 0.5,
+              ease: [0.22, 1, 0.36, 1] as const,
+            },
+          },
+        },
+      }
+    : {};
+
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-primary/5 via-background to-secondary/10">
+    <motion.section
+      className="relative overflow-hidden bg-gradient-to-b from-primary/5 via-background to-secondary/10"
+      {...sectionAnimation}
+    >
       <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-background via-background/80 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background via-background/70 to-transparent" />
 
       <div className="relative mx-auto flex max-w-7xl flex-col gap-10 px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-18">
-        <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
-          <div className="inline-flex items-center gap-1.5 rounded-sm border border-border bg-background px-2.5 py-1 text-[0.6875rem] font-medium text-muted-foreground shadow-xs sm:gap-2 sm:px-3 sm:text-xs">
+        <motion.div
+          className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center"
+          {...headerAnimation}
+        >
+          <motion.div
+            className="inline-flex items-center gap-1.5 rounded-sm border border-border bg-background px-2.5 py-1 text-[0.6875rem] font-medium text-muted-foreground shadow-xs sm:gap-2 sm:px-3 sm:text-xs"
+            {...headerItemAnimation}
+          >
             <RiSparkling2Line
               aria-hidden="true"
               className="size-3 text-primary sm:size-3.5"
             />
             <span>Gallery</span>
-          </div>
-          <h1 className="max-w-4xl text-balance text-4xl font-sans font-bold leading-[1.1] tracking-tight text-foreground sm:text-5xl">
+          </motion.div>
+          <motion.h1
+            className="max-w-4xl text-balance text-4xl font-sans font-bold leading-[1.1] tracking-tight text-foreground sm:text-5xl"
+            {...headerItemAnimation}
+          >
             See what others are Creating with AdShot AI.
-          </h1>
-          <p className="max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
+          </motion.h1>
+          <motion.p
+            className="max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg"
+            {...headerItemAnimation}
+          >
             Browse a live mix of product visuals, brand moods, and
             campaign-ready scenes created to help stores launch faster and look
             sharper.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         <div
           aria-busy={isLoading}
@@ -137,6 +199,7 @@ export default function GalleryMasonrySection() {
                   src={item.src}
                   alt={item.alt}
                   aspectClass={item.aspectClass}
+                  index={index}
                   priority={index < 4}
                 />
               ))}
@@ -153,6 +216,6 @@ export default function GalleryMasonrySection() {
           </Button>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }
