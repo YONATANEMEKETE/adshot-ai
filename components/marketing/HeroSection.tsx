@@ -1,16 +1,18 @@
 'use client';
 
-import Link from 'next/link';
 import { motion, useReducedMotion } from 'motion/react';
 import { RiArrowRightLine, RiSparkling2Line } from '@remixicon/react';
 
 import HeroComparisonCard from './HeroComparisonCard';
 import HeroResultsCard from './HeroResultsCard';
 import HeroStudioCard from './HeroStudioCard';
+import { Button } from '@/components/ui/button';
 import { buttonVariants } from '@/components/ui/button-variants';
+import { useAuthDialogStore } from '@/lib/stores/use-auth-dialog-store';
 import { cn } from '@/lib/utils';
 
 export default function HeroSection() {
+  const openAuthDialog = useAuthDialogStore((state) => state.openDialog);
   const prefersReducedMotion = useReducedMotion();
   const shouldAnimate = !prefersReducedMotion;
   const sectionAnimation = shouldAnimate
@@ -97,22 +99,22 @@ export default function HeroSection() {
             className="mt-8 flex flex-col items-center gap-3 sm:flex-row"
             {...itemAnimation}
           >
-            <Link
-              href="/sign-up"
-              className={cn(
-                buttonVariants({ variant: 'default', size: 'lg' }),
-                'px-5 shadow-md',
-              )}
+            <Button
+              type="button"
+              variant="default"
+              size="lg"
+              className="px-5 shadow-md"
+              onClick={openAuthDialog}
             >
               <span>Start Creating Free</span>
               <RiArrowRightLine
                 aria-hidden="true"
                 className="size-4 transition-transform duration-200 ease-out group-hover/button:translate-x-0.5"
               />
-            </Link>
+            </Button>
 
-            <Link
-              href="/demo"
+            <a
+              href="/gallery"
               className={cn(
                 buttonVariants({ variant: 'outline', size: 'lg' }),
                 'bg-background px-5',
@@ -120,7 +122,7 @@ export default function HeroSection() {
             >
               <span>View Public Gallery</span>
               {/* <RiArrowRightLine aria-hidden="true" className="size-4" /> */}
-            </Link>
+            </a>
           </motion.div>
         </motion.div>
 

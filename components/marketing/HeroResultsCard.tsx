@@ -20,11 +20,11 @@ export default function HeroResultsCard() {
         </p>
       </div>
 
-      <div className="mt-8 relative w-full flex-1">
+      <div className="mt-4 relative w-full flex-1">
         {/* Decorative background grid fading out */}
         <div className="absolute inset-0 bg-size-[2rem_2rem] bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] opacity-[0.15] mask-[linear-gradient(to_bottom,white,transparent)]" />
 
-        <div className="relative z-10 grid grid-cols-4 gap-3 sm:gap-4">
+        <div className="relative z-10 grid grid-cols-4 gap-2 sm:gap-3">
           {/* Row 1 */}
           <div className="flex aspect-square items-center justify-center rounded-xl border border-border bg-background shadow-sm">
             <RiInstagramLine className="size-5 sm:size-6 text-foreground" />

@@ -13,6 +13,7 @@ import {
 
 import Logo from '@/components/shared/Logo';
 import { buttonVariants } from '@/components/ui/button-variants';
+import { useAuthDialogStore } from '@/lib/stores/use-auth-dialog-store';
 import { cn } from '@/lib/utils';
 
 interface MarketingNavItem {
@@ -120,30 +121,31 @@ function NavbarShell({
         </nav>
 
         <div className="flex items-center gap-2">
-          <Link
-            href={signInHref}
+          <button
+            type="button"
             className={cn(
               buttonVariants({ variant: 'ghost', size: 'sm' }),
               'hidden px-2.5 text-sm font-medium md:inline-flex lg:text-[0.95rem]',
             )}
+            onClick={(event) => onNavItemClick(event as never, signInHref, true)}
           >
             {signInLabel}
-          </Link>
+          </button>
 
-          <Link
-            href={signUpHref}
+          <button
+            type="button"
             className={cn(
               buttonVariants({ variant: 'default', size: 'sm' }),
               'px-3 text-xs font-medium sm:px-3.5 sm:text-sm lg:text-[0.95rem]',
             )}
-            onClick={onCloseMobileMenu}
+            onClick={(event) => onNavItemClick(event as never, signUpHref, true)}
           >
             <span>{signUpLabel}</span>
             <RiArrowRightLine
               aria-hidden="true"
               className="size-4 transition-transform duration-200 ease-out group-hover/button:translate-x-0.5"
             />
-          </Link>
+          </button>
 
           {!floating ? (
             <button
@@ -192,20 +194,20 @@ function NavbarShell({
               ))}
             </ul>
 
-            <Link
-              href={signUpHref}
+            <button
+              type="button"
               className={cn(
                 buttonVariants({ variant: 'default', size: 'sm' }),
                 'mt-4 w-full justify-center text-sm font-medium',
               )}
-              onClick={onCloseMobileMenu}
+              onClick={(event) => onNavItemClick(event as never, signUpHref, true)}
             >
               <span>{signUpLabel}</span>
               <RiArrowRightLine
                 aria-hidden="true"
                 className="size-4 transition-transform duration-200 ease-out group-hover/button:translate-x-0.5"
               />
-            </Link>
+            </button>
           </nav>
         </div>
       ) : null}
@@ -217,6 +219,7 @@ export default function MarketingNavbar(props: MarketingNavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isFloatingVisible, setIsFloatingVisible] = useState(false);
   const pathname = usePathname();
+  const openAuthDialog = useAuthDialogStore((state) => state.openDialog);
   const prefersReducedMotion = useReducedMotion();
   const shouldAnimate = !prefersReducedMotion;
   const lastScrollYRef = useRef(0);
@@ -310,6 +313,12 @@ export default function MarketingNavbar(props: MarketingNavbarProps) {
   ) => {
     if (closeMenu) {
       closeMobileMenu();
+    }
+
+    if (href === '/auth' || href === '/sign-up') {
+      event.preventDefault();
+      openAuthDialog();
+      return;
     }
 
     const isHashLink = href.startsWith('/#') || href.startsWith('#');

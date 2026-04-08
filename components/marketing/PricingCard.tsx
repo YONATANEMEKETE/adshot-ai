@@ -1,10 +1,10 @@
-import Link from 'next/link';
 import {
   RiArrowRightLine,
   RiCheckboxCircleFill,
   RiCloseCircleLine,
 } from '@remixicon/react';
 
+import { Button } from '@/components/ui/button';
 import { buttonVariants } from '@/components/ui/button-variants';
 import { cn } from '@/lib/utils';
 
@@ -28,7 +28,13 @@ export type PricingTier = {
   featured?: boolean;
 };
 
-export default function PricingCard({ tier }: { tier: PricingTier }) {
+export default function PricingCard({
+  tier,
+  onCtaClick,
+}: {
+  tier: PricingTier;
+  onCtaClick?: () => void;
+}) {
   const isFeatured = tier.featured;
 
   return (
@@ -155,8 +161,9 @@ export default function PricingCard({ tier }: { tier: PricingTier }) {
           ) : null} */}
         </div>
 
-        <Link
-          href={tier.ctaHref}
+        <Button
+          type="button"
+          size="lg"
           className={cn(
             buttonVariants({ size: 'lg' }),
             'min-w-[10rem] rounded-sm px-4 text-sm font-semibold shadow-none',
@@ -164,10 +171,11 @@ export default function PricingCard({ tier }: { tier: PricingTier }) {
               ? 'bg-primary text-primary-foreground hover:bg-primary/85'
               : 'bg-foreground text-background hover:bg-foreground/90',
           )}
+          onClick={onCtaClick}
         >
           <span>{tier.ctaLabel}</span>
           <RiArrowRightLine aria-hidden="true" className="size-4" />
-        </Link>
+        </Button>
       </div>
     </article>
   );

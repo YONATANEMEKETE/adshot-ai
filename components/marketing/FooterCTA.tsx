@@ -1,14 +1,14 @@
 'use client';
 
-import Link from 'next/link';
 import { motion, useReducedMotion } from 'motion/react';
 import { RiArrowRightUpLine, RiCheckboxCircleFill } from '@remixicon/react';
 
-import { buttonVariants } from '@/components/ui/button-variants';
+import { Button } from '@/components/ui/button';
+import { useAuthDialogStore } from '@/lib/stores/use-auth-dialog-store';
 import Logo from '@/components/shared/Logo';
-import { cn } from '@/lib/utils';
 
 export default function FooterCTA() {
+  const openAuthDialog = useAuthDialogStore((state) => state.openDialog);
   const prefersReducedMotion = useReducedMotion();
   const shouldAnimate = !prefersReducedMotion;
   const ctaAnimation = shouldAnimate
@@ -105,19 +105,19 @@ export default function FooterCTA() {
               <span className="text-3xl font-sans font-bold tracking-tight text-primary-foreground sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
                 Into Campaign-Ready Assets
               </span>
-              <Link
-                href="/auth"
-                className={cn(
-                  buttonVariants({ variant: 'default', size: 'lg' }),
-                  'shrink-0 rounded-sm bg-background px-6 font-semibold text-foreground shadow-sm hover:bg-background/90',
-                )}
+              <Button
+                type="button"
+                variant="default"
+                size="lg"
+                className="shrink-0 rounded-sm bg-background px-6 font-semibold text-foreground shadow-sm hover:bg-background/90"
+                onClick={openAuthDialog}
               >
                 Get Started Free
                 <RiArrowRightUpLine
                   className="ml-1.5 size-4 transition-transform duration-200 ease-out group-hover/button:translate-x-0.5 group-hover/button:-translate-y-0.5"
                   aria-hidden="true"
                 />
-              </Link>
+              </Button>
             </div>
           </motion.div>
 

@@ -9,7 +9,9 @@ import {
 } from '@remixicon/react';
 
 import HowItWorksCard, { type HowItWorksCardProps } from './HowItWorksCard';
+import { Button } from '@/components/ui/button';
 import { buttonVariants } from '@/components/ui/button-variants';
+import { useAuthDialogStore } from '@/lib/stores/use-auth-dialog-store';
 import { cn } from '@/lib/utils';
 
 const steps: HowItWorksCardProps[] = [
@@ -88,6 +90,7 @@ const steps: HowItWorksCardProps[] = [
 ];
 
 export default function HowItWorksSection() {
+  const openAuthDialog = useAuthDialogStore((state) => state.openDialog);
   const prefersReducedMotion = useReducedMotion();
   const shouldAnimate = !prefersReducedMotion;
   const containerAnimation = shouldAnimate
@@ -197,15 +200,15 @@ export default function HowItWorksSection() {
             className="mt-6 flex flex-col items-start gap-3 sm:flex-row"
             {...itemAnimation}
           >
-            <Link
-              href="/auth"
-              className={cn(
-                buttonVariants({ variant: 'default', size: 'lg' }),
-                'px-6 font-semibold shadow-md',
-              )}
+            <Button
+              type="button"
+              variant="default"
+              size="lg"
+              className="px-6 font-semibold shadow-md"
+              onClick={openAuthDialog}
             >
               Try for free!
-            </Link>
+            </Button>
 
             <Link
               href="/gallery"
