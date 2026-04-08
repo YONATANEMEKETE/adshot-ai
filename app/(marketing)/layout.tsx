@@ -25,6 +25,7 @@ export default function MarketingLayout({
         items={[
           { href: '/#how-it-works', label: 'How It Works' },
           { href: '/#pricing', label: 'Pricing' },
+          { href: '/gallery', label: 'Gallery' },
         ]}
         signInHref="/auth"
         signInLabel="Sign In"

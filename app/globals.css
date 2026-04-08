@@ -189,11 +189,29 @@
   .animate-float {
     animation: float var(--float-duration, 6s) ease-in-out infinite;
   }
+
+  .skeleton-shimmer {
+    animation: skeleton-shimmer 1.8s ease-in-out infinite;
+  }
 }
 
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-8px); }
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    transform: translateX(0) skewX(-12deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.45;
+  }
+  100% {
+    transform: translateX(320%) skewX(-12deg);
+    opacity: 0;
+  }
 }
 
 @layer base {

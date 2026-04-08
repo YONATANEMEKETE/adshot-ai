@@ -3,7 +3,6 @@ import {
   RiGlobalLine,
   RiInstagramLine,
   RiLinksLine,
-  RiShoppingBag3Line,
   RiStore2Line,
   RiTiktokLine,
 } from '@remixicon/react';
