@@ -2,12 +2,7 @@
 
 import Link from 'next/link';
 import { motion, useReducedMotion } from 'motion/react';
-import {
-  RiAddLine,
-  RiArrowRightUpLine,
-  RiCheckboxCircleFill,
-  RiSparkling2Line,
-} from '@remixicon/react';
+import { RiArrowRightUpLine, RiCheckboxCircleFill } from '@remixicon/react';
 
 import { buttonVariants } from '@/components/ui/button-variants';
 import Logo from '@/components/shared/Logo';
