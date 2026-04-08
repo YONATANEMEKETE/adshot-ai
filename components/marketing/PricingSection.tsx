@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { motion, useReducedMotion } from 'motion/react';
 import { RiArrowRightLine } from '@remixicon/react';
 
@@ -8,6 +7,7 @@ import SectionWrapper from '@/components/shared/SectionWrapper';
 import PricingCard, {
   type PricingTier,
 } from '@/components/marketing/PricingCard';
+import { useAuthDialogStore } from '@/lib/stores/use-auth-dialog-store';
 
 const pricingTiers: PricingTier[] = [
   {
@@ -62,6 +62,7 @@ const pricingTiers: PricingTier[] = [
 ];
 
 export default function PricingSection() {
+  const openAuthDialog = useAuthDialogStore((state) => state.openDialog);
   const prefersReducedMotion = useReducedMotion();
   const shouldAnimate = !prefersReducedMotion;
   const introAnimation = shouldAnimate
@@ -154,13 +155,14 @@ export default function PricingSection() {
               Start free, upgrade when you need faster output, sharper exports,
               and usage rights built for shipping creative work every day.
             </p>
-            <Link
-              href="/auth"
+            <button
+              type="button"
               className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-foreground transition-colors hover:text-primary"
+              onClick={openAuthDialog}
             >
               Start Free
               <RiArrowRightLine aria-hidden="true" className="size-4" />
-            </Link>
+            </button>
           </motion.div>
         </motion.div>
 
@@ -170,7 +172,7 @@ export default function PricingSection() {
         >
           {pricingTiers.map((tier) => (
             <motion.div key={tier.name} {...cardItemAnimation}>
-              <PricingCard tier={tier} />
+              <PricingCard tier={tier} onCtaClick={openAuthDialog} />
             </motion.div>
           ))}
         </motion.div>

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
+import AuthDialogHost from '@/components/auth/AuthDialogHost';
 import SectionWrapper from '@/components/shared/SectionWrapper';
 
 const fontSans = Inter({
@@ -47,6 +48,7 @@ export default function RootLayout({
         <SectionWrapper className="relative z-10 flex min-h-full flex-col">
           {children}
         </SectionWrapper>
+        <AuthDialogHost />
       </body>
     </html>
   );
