@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { RiArrowRightLine } from '@remixicon/react';
 
@@ -18,6 +19,39 @@ interface AuthDialogProps {
   onGoogleContinue?: () => void;
   isSubmitting?: boolean;
 }
+
+const PRODUCT_IMAGES = [
+  {
+    src: '/images/products/product-1.jpg',
+    alt: 'Styled product photo showcased against a polished studio background.',
+  },
+  {
+    src: '/images/products/product-2.jpg',
+    alt: 'Product image displayed as a premium marketing visual.',
+  },
+  {
+    src: '/images/products/product-3.jpg',
+    alt: 'Creative product scene designed for ecommerce promotion.',
+  },
+  {
+    src: '/images/products/product-4.jpg',
+    alt: 'Clean branded product composition for an online storefront.',
+  },
+  {
+    src: '/images/products/product-5.jpg',
+    alt: 'Lifestyle-inspired product photo with a refined editorial feel.',
+  },
+  {
+    src: '/images/products/product-6.jpg',
+    alt: 'High-quality product shot presented with soft studio lighting.',
+  },
+  {
+    src: '/images/products/product-7.jpg',
+    alt: 'Polished hero-style product image ready for marketing use.',
+  },
+] as const;
+
+const IMAGE_ROTATION_INTERVAL_MS = 2500;
 
 function GoogleMark() {
   return (
@@ -48,23 +82,56 @@ export default function AuthDialog({
   onGoogleContinue,
   isSubmitting = false,
 }: AuthDialogProps) {
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      setActiveImageIndex(0);
+    }
+
+    onOpenChange(nextOpen);
+  };
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    const intervalId = window.setInterval(() => {
+      setActiveImageIndex(
+        (currentIndex) => (currentIndex + 1) % PRODUCT_IMAGES.length,
+      );
+    }, IMAGE_ROTATION_INTERVAL_MS);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [open]);
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         className="max-w-xl gap-0 overflow-hidden border border-border bg-card p-0 shadow-2xl rounded-sm"
         showCloseButton
       >
         <div className="p-4 sm:p-5">
           <div className="relative overflow-hidden rounded-sm border border-border bg-muted/40">
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-secondary/10" />
-            <Image
-              src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1400&q=80"
-              alt="Dreamlike ocean cliffs and bright sky representing polished creative output."
-              width={1400}
-              height={900}
-              priority
-              className="aspect-[16/9] w-full object-cover"
-            />
+            <div className="absolute inset-0 bg-linear-to-tr from-primary/10 via-transparent to-secondary/10" />
+            <div className="relative aspect-video w-full">
+              {PRODUCT_IMAGES.map((image, index) => (
+                <Image
+                  key={image.src}
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  priority={index === 0}
+                  sizes="(max-width: 640px) 100vw, 576px"
+                  className={`object-cover transition-opacity duration-700 ease-in-out ${
+                    index === activeImageIndex ? 'opacity-100' : 'opacity-0'
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         </div>
 
