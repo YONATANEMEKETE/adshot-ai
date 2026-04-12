@@ -11,7 +11,7 @@ export default function AuthDialogHost() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const signIn = async () => {
-    const data = await authClient.signIn.social({
+    await authClient.signIn.social({
       provider: 'google',
       callbackURL: '/dashboard',
       errorCallbackURL: '/auth/error',

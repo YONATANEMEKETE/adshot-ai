@@ -51,7 +51,7 @@ const PRODUCT_IMAGES = [
   },
 ] as const;
 
-const IMAGE_ROTATION_INTERVAL_MS = 5000;
+const IMAGE_ROTATION_INTERVAL_MS = 2500;
 
 function GoogleMark() {
   return (
@@ -84,9 +84,16 @@ export default function AuthDialog({
 }: AuthDialogProps) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      setActiveImageIndex(0);
+    }
+
+    onOpenChange(nextOpen);
+  };
+
   useEffect(() => {
     if (!open) {
-      setActiveImageIndex(0);
       return;
     }
 
@@ -102,7 +109,7 @@ export default function AuthDialog({
   }, [open]);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         className="max-w-xl gap-0 overflow-hidden border border-border bg-card p-0 shadow-2xl rounded-sm"
         showCloseButton
