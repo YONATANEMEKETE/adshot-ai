@@ -85,18 +85,10 @@ export default function AuthDialog({
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   const handleOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen) {
-      setActiveImageIndex(0);
-    }
-
     onOpenChange(nextOpen);
   };
 
   useEffect(() => {
-    if (!open) {
-      return;
-    }
-
     const intervalId = window.setInterval(() => {
       setActiveImageIndex(
         (currentIndex) => (currentIndex + 1) % PRODUCT_IMAGES.length,
@@ -106,7 +98,7 @@ export default function AuthDialog({
     return () => {
       window.clearInterval(intervalId);
     };
-  }, [open]);
+  }, []);
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
