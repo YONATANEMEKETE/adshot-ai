@@ -1,0 +1,44 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="64" height="64" rx="4" fill="#FAFAF9" />
+  
+  <!-- AdShot AI Logo Mark -->
+  <!-- Concept: "From Flat Photo to AI Lifestyle Masterpiece" -->
+  
+  <g id="logo-mark">
+    <!-- Original Photo / Framing Tool -->
+    <g id="crop-frame">
+      <!-- Top-Left Frame -->
+      <path
+        d="M4 28V4H28V10H10V28H4Z"
+        fill="#1F2937"
+      />
+      <!-- Bottom-Right Frame -->
+      <path
+        d="M60 36V60H36V54H54V36H60Z"
+        fill="#1F2937"
+      />
+    </g>
+
+    <!-- AI Transformation Sparks -->
+    <g id="ai-sparks">
+      <!-- Central Main Spark -->
+      <path
+        d="M32 12C32 24 24 32 12 32C24 32 32 40 32 52C32 40 40 32 52 32C40 32 32 24 32 12Z"
+        fill="#FF4266"
+      />
+      <!-- Top-Right Secondary Spark -->
+      <path
+        d="M52 4C52 9 49 12 44 12C49 12 52 15 52 20C52 15 55 12 60 12C55 12 52 9 52 4Z"
+        fill="#FF4266"
+        fill-opacity="0.8"
+      />
+      <!-- Bottom-Left Secondary Spark -->
+      <path
+        d="M12 44C12 49 9 52 4 52C9 52 12 55 12 60C12 55 15 52 20 52C15 52 12 49 12 44Z"
+        fill="#FF4266"
+        fill-opacity="0.8"
+      />
+    </g>
+  </g>
+</svg>
