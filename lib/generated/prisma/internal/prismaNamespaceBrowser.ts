@@ -54,7 +54,8 @@ export const ModelName = {
   User: 'User',
   Session: 'Session',
   Account: 'Account',
-  Verification: 'Verification'
+  Verification: 'Verification',
+  UserQuota: 'UserQuota'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -129,6 +130,18 @@ export const VerificationScalarFieldEnum = {
 } as const
 
 export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
+
+
+export const UserQuotaScalarFieldEnum = {
+  userId: 'userId',
+  generationsUsed: 'generationsUsed',
+  quotaLimit: 'quotaLimit',
+  resetAt: 'resetAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserQuotaScalarFieldEnum = (typeof UserQuotaScalarFieldEnum)[keyof typeof UserQuotaScalarFieldEnum]
 
 
 export const SortOrder = {
