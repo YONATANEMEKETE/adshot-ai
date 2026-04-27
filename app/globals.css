@@ -190,6 +190,14 @@
     animation: float var(--float-duration, 6s) ease-in-out infinite;
   }
 
+  .animate-vertical-marquee {
+    animation: vertical-marquee var(--marquee-duration, 26s) linear infinite;
+  }
+
+  .animate-vertical-marquee-reverse {
+    animation: vertical-marquee-reverse var(--marquee-duration, 26s) linear infinite;
+  }
+
   .skeleton-shimmer {
     animation: skeleton-shimmer 1.8s ease-in-out infinite;
   }
@@ -211,6 +219,24 @@
   100% {
     transform: translateX(320%) skewX(-12deg);
     opacity: 0;
+  }
+}
+
+@keyframes vertical-marquee {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes vertical-marquee-reverse {
+  0% {
+    transform: translateY(-50%);
+  }
+  100% {
+    transform: translateY(0);
   }
 }
 
