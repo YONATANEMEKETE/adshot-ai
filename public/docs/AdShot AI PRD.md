@@ -1,6 +1,6 @@
 # AdShot AI - Product Requirement Document (PRD)
 
-**Last Updated:** 2026-04-12
+**Last Updated:** 2026-04-23
 
 ## 1. Product Overview
 
@@ -23,40 +23,34 @@
 5. **Image Upscaling:** Ensures final output is sharp and social media-ready
 6. **Gallery / My Shots:** Users can view, retrieve, and reuse past generations
 7. **Download Options:** Download each variation individually or all at once
-8. **Authentication:** Google OAuth sign-up/sign-in powered by Better Auth
-9. **Pricing, Plans, and Usage Controls:**
-   - Two primary plans at launch: **Free** and **Pro**
-   - Users choose a plan as part of initial authentication/onboarding
-   - Users can upgrade their plan later from the product
-   - Plan entitlements determine generation limits, rate limits, export options, and other usage controls
-   - Exact quotas, perks, and enforcement details will be finalized later
+8. **Authentication:** Google OAuth sign-up/sign-in powered by Better Auth with working session persistence, sign-out, and dashboard access.
+9. **Usage Controls and Rate Limiting:**
+   - Each user has a fair-use quota tied to available free infrastructure capacity
+   - Rate limiting protects the app from abuse and preserves shared compute
+   - Usage limits apply across generation and other costly AI actions
+   - Exact thresholds and enforcement details will be finalized later
 
 ## 3. Pages and Purposes (Updated)
 
 1. **Landing Page**
    - **Purpose:** Convert visitors into active users by clearly communicating the product's value and capabilities.
-   - **Content:** High-impact hero section, dynamic previews of AI-generated outputs, feature highlights, pricing tiers, and clear CTAs. Content structure is flexible and designed to scale as the product evolves.
+   - **Content:** High-impact hero section, dynamic previews of AI-generated outputs, feature highlights, usage guidance, and clear CTAs. Content structure is flexible and designed to scale as the product evolves.
 2. **Public Gallery Page (New)**
    - **Purpose:** Inspire users and showcase community creativity by displaying AI-generated ad photoshoots.
    - **Content:** A browsable, grid-based showcase of all user-generated shots marked as public. Includes filtering by theme, style, or date, and quick-view options to explore how others are using the tool.
 3. **Authentication Page**
    - **Purpose:** Provide secure, frictionless access to the platform.
    - **Content:** A single, unified authentication screen powered by Better Auth, exclusively supporting Google OAuth for both sign-up and login. No traditional email/password flows.
-4. **Plan Selection / Onboarding Flow**
-   - **Purpose:** Move newly authenticated users into an explicit plan before they begin generating assets.
-   - **Content:** Clear plan comparison between Free and Pro, selection during onboarding, entitlement summary, and a path into the dashboard after plan confirmation.
-5. **Dashboard (Virtual Studio)**
+4. **Dashboard (Virtual Studio)**
    - **Purpose:** The core creation workspace where users transform product photos into marketing assets.
    - **Content:** Drag-and-drop upload zone, configuration sidebar (Theme, Richness, Vibe Context, Orientation), prompt assist, and a real-time generation staging area with progress feedback.
-6. **My Shots Page**
+5. **My Shots Page**
    - **Purpose:** Personal asset management, iteration, and retrieval.
    - **Content:** A private, grid-based list of the current user's generated images. Users can search and filter images using the settings used during generation.
-7. **Settings / Account Page**
-   - **Purpose:** Central hub for plan management, usage visibility, and profile details for the MVP.
+6. **Settings / Account Page**
+   - **Purpose:** Central hub for usage visibility and profile details for the MVP.
    - **Content:**
-     - Current plan, plan comparison, upgrade/downgrade controls
      - Credit usage, generation usage, and rate-limit visibility
-     - Subscription management
      - Profile details
 
 ## 4. Tech Stack (Updated 2026)
@@ -80,16 +74,21 @@
 - Better Auth (secure, developer-friendly authentication suite)
 - Cloudinary (hosting original and generated high-res assets)
 - Vercel (Edge Functions for low-latency AI orchestration)
-- Polar or Stripe-backed subscription state, entitlements, and billing workflows
 
-### AI Operations & Payments
+### AI Operations & Constraints
 
-- Polar or Stripe (Merchant of Record for global tax compliance and subscriptions)
+- Rate limiting and usage enforcement for shared free-tier infrastructure
+- Every user has 5 generations per month
 - PostHog (session replays and event tracking) or Plausible (privacy-first analytics)
 
 ## 5. User Flow
 
-Not decided yet. This section will be updated later once the v1 user flow is finalized.
+1. User arrives on the landing page.
+2. User signs in with Google through Better Auth.
+3. Session persists and the user can return later without re-authenticating.
+4. User lands in the dashboard and begins a generation workflow.
+5. The app checks usage availability before allowing costly actions.
+6. If the user hits a limit, the UI explains the restriction and blocks further costly actions until the quota resets or usage becomes available again.
 
 ## 6. Generation Pipeline Logic
 
@@ -100,10 +99,9 @@ Not decided yet. This section will be updated later once the v1 generation pipel
 - **Visual Fidelity:** Realistic shadows and seamless scene integration
 - **Speed:** Generation-to-display time under 15 seconds
 - **UX Quality:** Minimalist interface with no "flash of unstyled content"
-- **Global Readiness:** Successful payment processing in multiple currencies via Polar/Stripe
 - **Community Engagement:** % of users marking shots as public; gallery interaction rates
-- **Subscription Conversion:** % of authenticated users selecting a plan and upgrading from Free to Pro
-- **Usage Governance:** Reliable enforcement of plan-based quotas and rate limits without blocking valid generations
+- **Usage Governance:** Reliable enforcement of fair-use quotas and rate limits without blocking valid generations
+- **Retention:** Returning users can sign in, resume, and continue from the dashboard without friction
 
 ## 8. MVP Goals
 
@@ -111,5 +109,5 @@ Not decided yet. This section will be updated later once the v1 generation pipel
 - Working "Virtual Studio" pipeline for single-product generation
 - Functional "My Shots" page with a list of user-generated images plus search and filtering based on generation settings
 - Public Gallery page with community showcase & moderation safeguards
-- Integrated plan selection, subscription, and usage-limit system for Free and Pro
-- Settings page for subscription plan control, credit usage, generation usage, rate-limit visibility, and profile details
+- Integrated usage-limit and rate-limit system for shared free infrastructure capacity
+- Settings page for profile details, usage visibility, and limit status
