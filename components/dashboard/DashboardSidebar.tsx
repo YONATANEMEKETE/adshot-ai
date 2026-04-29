@@ -10,6 +10,11 @@ import {
 
 import DashboardUserAvatar from '@/components/dashboard/DashboardUserAvatar';
 import Logo from '@/components/shared/Logo';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
 const dashboardNavItems = [
@@ -54,27 +59,32 @@ export default function DashboardSidebar() {
 
             return (
               <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className={cn(
-                    'group flex size-12 items-center justify-center rounded-[calc(var(--radius)+0.35rem)] border bg-card shadow-sm transition-all duration-200 hover:shadow-md',
-                    isActive
-                      ? 'translate-x-1.5 border-primary bg-primary text-primary-foreground shadow-md hover:border-primary hover:bg-primary hover:text-primary-foreground'
-                      : 'border-border text-muted-foreground hover:translate-x-0.5 hover:border-primary/35 hover:bg-primary/8 hover:text-primary',
-                  )}
-                  aria-label={item.label}
-                  title={item.label}
-                >
-                  <Icon
-                    aria-hidden="true"
-                    className={cn(
-                      'size-5 transition-all duration-200 group-hover:scale-105',
-                      isActive
-                        ? 'text-primary-foreground'
-                        : 'group-hover:text-primary',
-                    )}
-                  />
-                </Link>
+                <Tooltip>
+                  <TooltipTrigger render={<Link href={item.href} />}>
+                    <span
+                      className={cn(
+                        'group flex size-12 items-center justify-center rounded-[calc(var(--radius)+0.35rem)] border bg-card shadow-sm transition-all duration-200 hover:shadow-md',
+                        isActive
+                          ? 'translate-x-1.5 border-primary bg-primary text-primary-foreground shadow-md hover:border-primary hover:bg-primary hover:text-primary-foreground'
+                          : 'border-border text-muted-foreground hover:translate-x-0.5 hover:border-primary/35 hover:bg-primary/8 hover:text-primary',
+                      )}
+                      aria-label={item.label}
+                    >
+                      <Icon
+                        aria-hidden="true"
+                        className={cn(
+                          'size-5 transition-all duration-200 group-hover:scale-105',
+                          isActive
+                            ? 'text-primary-foreground'
+                            : 'group-hover:text-primary',
+                        )}
+                      />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" sideOffset={10}>
+                    {item.label}
+                  </TooltipContent>
+                </Tooltip>
               </li>
             );
           })}
