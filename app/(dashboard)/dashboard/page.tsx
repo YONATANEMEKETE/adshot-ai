@@ -1,30 +1,17 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { authClient } from '@/lib/auth-client';
 import { Button } from '@/components/ui/button';
+import { useSignOut } from '@/lib/hooks/use-sign-out';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [isSigningOut, setIsSigningOut] = useState(false);
-
-  const handleSignOut = async () => {
-    try {
-      setIsSigningOut(true);
-
-      await authClient.signOut({
-        fetchOptions: {
-          onSuccess: () => {
-            router.push('/');
-          },
-        },
-      });
-    } finally {
-      setIsSigningOut(false);
-    }
-  };
+  const { isSigningOut, signOut } = useSignOut({
+    onSuccess: () => {
+      router.push('/');
+    },
+  });
 
   return (
     <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center px-4 py-10">
@@ -35,7 +22,7 @@ export default function DashboardPage() {
         <Button
           type="button"
           variant="outline"
-          onClick={handleSignOut}
+          onClick={() => void signOut()}
           disabled={isSigningOut}
         >
           {isSigningOut ? 'Signing out...' : 'Sign out'}
