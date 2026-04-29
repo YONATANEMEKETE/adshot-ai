@@ -6,9 +6,9 @@ import {
   RiImageCircleLine,
   RiSettings4Line,
   RiSparkling2Line,
-  RiUser3Line,
 } from '@remixicon/react';
 
+import DashboardUserAvatar from '@/components/dashboard/DashboardUserAvatar';
 import Logo from '@/components/shared/Logo';
 import { cn } from '@/lib/utils';
 
@@ -37,10 +37,10 @@ export default function DashboardSidebar() {
     <aside className="flex w-full shrink-0 flex-row items-center justify-between gap-4 px-4 py-3 md:sticky md:top-0 md:h-[100dvh] md:w-24 md:flex-col md:px-0 md:py-4">
       <Link
         href="/dashboard"
-        className="inline-flex size-12 items-center justify-center rounded-[calc(var(--radius)+0.4rem)] bg-secondary text-foreground shadow-sm transition-transform hover:scale-[1.02]"
+        className="inline-flex size-12 items-center justify-center rounded-sm bg-background text-foreground shadow-md"
         aria-label="Go to dashboard home"
       >
-        <Logo size={28} className="text-foreground" aria-hidden="true" />
+        <Logo size={28} className="text-background" aria-hidden="true" />
       </Link>
 
       <nav
@@ -81,16 +81,7 @@ export default function DashboardSidebar() {
         </ul>
       </nav>
 
-      <button
-        type="button"
-        className="group flex size-12 items-center justify-center rounded-[calc(var(--radius)+0.35rem)] border border-border bg-card text-muted-foreground shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/35 hover:bg-primary/8 hover:text-primary hover:shadow-md"
-      >
-        <RiUser3Line
-          aria-hidden="true"
-          className="size-5 transition-all duration-200 group-hover:scale-105 group-hover:text-primary"
-        />
-        <span className="sr-only">User profile</span>
-      </button>
+      <DashboardUserAvatar />
     </aside>
   );
 }
