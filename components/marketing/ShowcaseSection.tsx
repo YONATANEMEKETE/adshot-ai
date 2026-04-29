@@ -279,7 +279,7 @@ export default function ShowcaseSection() {
     >
       <SectionWrapper>
         <div className="relative overflow-hidden">
-          <div className="grid lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)]">
+          <div className="grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] xl:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)]">
             <motion.div
               className="relative flex flex-col justify-between px-6 py-8 sm:px-10 sm:py-10 lg:min-h-[48rem] lg:px-12 lg:py-12"
               {...introAnimation}
@@ -325,13 +325,13 @@ export default function ShowcaseSection() {
                 </motion.p>
 
                 <motion.div
-                  className="mt-8 flex flex-col items-start gap-3 sm:flex-row"
+                  className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap lg:flex-col xl:flex-row"
                   {...itemAnimation}
                 >
                   <Button
                     type="button"
                     size="lg"
-                    className="px-6 shadow-md"
+                    className="w-full px-6 shadow-md sm:w-auto shrink-0"
                     onClick={openAuthDialog}
                   >
                     Start Creating
@@ -342,7 +342,7 @@ export default function ShowcaseSection() {
                     href="/gallery"
                     className={cn(
                       buttonVariants({ variant: 'outline', size: 'lg' }),
-                      'bg-background px-6',
+                      'w-full shrink-0 bg-background px-6 sm:w-auto',
                     )}
                   >
                     View Full Gallery
@@ -351,29 +351,31 @@ export default function ShowcaseSection() {
               </div>
             </motion.div>
 
-            <div className="relative border-t border-border/70 px-4 py-4 sm:px-5 lg:border-l lg:border-t-0 lg:px-6 lg:py-6">
-              <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-20 bg-gradient-to-b from-background via-background/80 to-transparent" />
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-24 bg-gradient-to-t from-background via-background/80 to-transparent" />
+            <div className="relative border-t border-border/70 px-4 py-4 sm:px-5 lg:border-t-0 lg:px-6 lg:py-6">
+              <div className="relative isolate overflow-hidden lg:border-l lg:border-border/70 lg:pl-6 [mask-image:linear-gradient(to_bottom,transparent_0%,black_10%,black_88%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,black_10%,black_88%,transparent_100%)]">
+                <div className="pointer-events-none absolute inset-x-0 -top-px z-10 h-24 bg-gradient-to-b from-background via-background/88 to-transparent" />
+                <div className="pointer-events-none absolute inset-x-0 -bottom-px z-10 h-18 bg-gradient-to-t from-background via-background/88 to-transparent sm:h-20" />
 
-              <div className="grid h-[34rem] grid-cols-2 gap-4 sm:h-[38rem] xl:h-[44rem] xl:grid-cols-3">
-                <ShowcaseColumn
-                  cards={showcaseColumns[0]}
-                  duration={26}
-                  reducedMotion={prefersReducedMotion}
-                />
-                <ShowcaseColumn
-                  cards={showcaseColumns[1]}
-                  duration={30}
-                  reverse
-                  reducedMotion={prefersReducedMotion}
-                  priorityOffset={1}
-                />
-                <div className="hidden xl:block">
+                <div className="grid h-[34rem] grid-cols-2 gap-4 sm:h-[38rem] xl:h-[44rem] xl:grid-cols-3">
                   <ShowcaseColumn
-                    cards={showcaseColumns[2]}
-                    duration={28}
+                    cards={showcaseColumns[0]}
+                    duration={26}
                     reducedMotion={prefersReducedMotion}
                   />
+                  <ShowcaseColumn
+                    cards={showcaseColumns[1]}
+                    duration={30}
+                    reverse
+                    reducedMotion={prefersReducedMotion}
+                    priorityOffset={1}
+                  />
+                  <div className="hidden xl:block">
+                    <ShowcaseColumn
+                      cards={showcaseColumns[2]}
+                      duration={28}
+                      reducedMotion={prefersReducedMotion}
+                    />
+                  </div>
                 </div>
               </div>
             </div>

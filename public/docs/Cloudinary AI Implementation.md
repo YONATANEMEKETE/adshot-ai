@@ -1,120 +1,214 @@
 # Cloudinary AI Implementation
 
-**Last Updated:** 2026-04-27
+**Last Updated:** 2026-04-29
 
-## Goal
+## 1. Purpose
 
-Implement the AdShot AI generation pipeline with Cloudinary as:
+This document defines the v1 Cloudinary architecture for AdShot AI based on:
 
-1. the storage layer for original product uploads
-2. the delivery layer for transformed outputs
-3. the AI transformation engine through URL-based transformations
+- the current codebase state
+- the PRD in `public/docs/AdShot AI PRD.md`
+- the monthly quota design in `public/docs/Monthly Credit Implementation.md`
+- current Cloudinary documentation reviewed through Context7
 
-This document captures the agreed v1 architecture for AdShot AI based on the current product direction and the existing repo structure.
+The goal is to implement the first real AdShot AI generation pipeline without paying for a separate model inference backend or building a custom image-generation API layer.
 
-## Confirmed Product Decisions
+## 2. Confirmed Product Direction
 
-The current flow is:
+The intended v1 flow is:
 
-1. The user uploads a product image.
-2. AdShot AI uploads the original file to Cloudinary.
-3. Cloudinary returns metadata, especially `public_id` and `secure_url`.
-4. The app stores and uses the `public_id` as the canonical image reference.
-5. The user configures the generation settings:
-   - theme / scene
-   - scene intensity
+1. The user signs in.
+2. The user uploads a product image.
+3. The app uploads the original file to Cloudinary.
+4. Cloudinary returns asset metadata, including `public_id` and `secure_url`.
+5. The app stores the uploaded asset reference.
+6. The user chooses generation settings:
+   - theme
+   - scene richness
    - vibe context
    - orientation
-6. The user clicks `Generate`.
-7. AdShot AI does **not** call a separate "generate image" REST endpoint for the scene generation step.
-8. Instead, AdShot AI constructs a Cloudinary transformation URL from:
-   - the uploaded image `public_id`
-   - AI transformation parameters
-   - the generated prompt string
-9. Cloudinary processes that transformation on first delivery request.
-10. The transformed result streams back through Cloudinary delivery/CDN and is shown in the UI.
+7. The user clicks `Generate`.
+8. The app checks and consumes one monthly generation credit.
+9. The app builds a Cloudinary transformation URL from the source image plus generation settings.
+10. The browser requests that derived Cloudinary URL.
+11. Cloudinary performs the transformation and returns the output.
+12. The app displays and optionally saves the generated shot record.
 
-## Key Cloudinary Model
+## 3. Core Architecture Rule
 
-This implementation depends on one important Cloudinary concept:
+For AdShot AI v1:
 
-- Upload is an API operation.
-- AI generation is a delivery transformation operation.
+- **uploading is a server-side SDK operation**
+- **generation is a Cloudinary delivery transformation**
 
 That means:
 
-- We make a server-side request to upload the original product image.
-- We do **not** make a second server-side request to "generate" the final result.
-- The final result is requested by rendering a Cloudinary delivery URL.
-- On the first request, Cloudinary creates a derived asset.
-- On later requests for the same transformation, Cloudinary can serve the cached derived asset.
+- we do need a protected server endpoint for uploads
+- we do not need a second custom server endpoint that performs image generation itself
+- the app's "generate" action is mainly:
+  - auth check
+  - quota check
+  - prompt construction
+  - transformation URL construction
+  - result rendering
 
-This fits AdShot AI well because the app can treat generation as "rendering a transformed asset" instead of orchestrating a separate generation job API.
+This keeps the product lightweight and aligned with the current no-extra-inference-cost direction.
 
-## Recommended v1 Technical Approach
+## 4. What Cloudinary Docs Confirmed
 
-### Upload path
+Based on the current Cloudinary docs reviewed through Context7:
 
-Use a **Next.js Route Handler** for uploads in v1:
+### Server-side upload remains standard SDK work
 
-- `app/api/uploads/product-image/route.ts`
-
-Why:
-
-- It fits the current dashboard direction better than a form-only Server Action flow.
-- It is easier to call from a drag-and-drop or multi-step configuration UI.
-- It keeps the upload contract explicit and reusable for future mobile or background clients.
-- It gives us a clear place for validation, auth checks, and response shaping.
-
-### Shared Cloudinary helpers
-
-Keep Cloudinary logic in `lib/cloudinary/` so the route handler and future Server Actions can share it:
-
-- `lib/cloudinary/config.ts`
-- `lib/cloudinary/upload.ts`
-- `lib/cloudinary/prompt.ts`
-- `lib/cloudinary/transformations.ts`
-- `lib/cloudinary/urls.ts`
-
-### Rendering transformed images
-
-For the UI layer, v1 should use one of these patterns:
-
-1. `next-cloudinary` with `CldImage` or `getCldImageUrl`
-2. Cloudinary URL generation plus `next/image`
-3. Cloudinary URL generation plus plain `img` where streaming behavior is preferred
-
-Recommended default:
-
-- Use the Cloudinary Node SDK on the server for upload and URL generation helpers.
-- Use `next-cloudinary` on the client or server-rendered UI when it simplifies delivery and responsive rendering.
-
-## Why `public_id` Matters More Than `secure_url`
-
-The uploaded asset returns both:
+The Cloudinary Node SDK still supports server-side uploads and returns the fields we need, including:
 
 - `public_id`
 - `secure_url`
 
-For AdShot AI:
+The docs also continue to support URL generation from a source `public_id` using transformation objects or helper methods.
 
-- `secure_url` is useful for immediate original preview.
-- `public_id` is the real durable identifier for all future transformations.
+### Generative background replacement is URL-transform based
 
-Reason:
-
-- Every Cloudinary transformation is built from the uploaded asset identifier.
-- The same `public_id` can produce many derived results without duplicating the original upload.
-- Storing only a final URL would make prompt-driven regeneration harder to manage cleanly.
-
-## Proposed Data Shapes
-
-### Upload response
-
-The upload endpoint should return a normalized payload like:
+Cloudinary documents prompt-based background replacement using transformation effects such as:
 
 ```ts
-type UploadedProductImage = {
+{ effect: "gen_background_replace:prompt_an old castle;seed_1" }
+```
+
+This aligns with your remembered architecture:
+
+- upload once
+- derive outputs through transformation URLs
+- do not run a separate custom image-generation API request
+
+### Generative fill is available for aspect-ratio extension
+
+Cloudinary also documents generative fill patterns such as:
+
+```text
+b_gen_fill[:prompt_<prompt>][;seed_<seed>]
+```
+
+This is useful when AdShot AI needs to adapt images to portrait or landscape canvases without harsh cropping.
+
+## 5. Recommended v1 Cloudinary Stack
+
+### Required package
+
+- `cloudinary`
+
+### Optional package
+
+- `next-cloudinary`
+
+Recommended usage split:
+
+- use the Cloudinary Node SDK for server configuration, uploads, and transformation URL helpers
+- use either:
+  - `next-cloudinary` `CldImage`
+  - `next-cloudinary` `getCldImageUrl`
+  - or `next/image` with generated Cloudinary URLs
+
+For this repo, the most flexible default is:
+
+- server: `cloudinary`
+- UI delivery: `getCldImageUrl` or `CldImage`
+
+## 6. Current Repo Implications
+
+Right now the repo does **not** yet have:
+
+- Cloudinary SDK wiring
+- Cloudinary env vars in documented form
+- upload route handlers
+- dashboard generation state
+- persisted shot models
+
+So this document is not describing code that already exists. It describes the next implementation target.
+
+## 7. Upload Architecture
+
+## Route shape
+
+Use a protected Next.js Route Handler:
+
+```text
+app/api/uploads/product-image/route.ts
+```
+
+This fits the current Next.js 16 app-router structure and works well for drag-and-drop upload UX.
+
+## Server responsibilities
+
+The route handler should:
+
+1. verify session
+2. read `FormData`
+3. validate file type
+4. validate file size
+5. upload to Cloudinary
+6. return normalized upload metadata
+
+## Recommended file organization
+
+```text
+lib/cloudinary/
+  config.ts
+  upload.ts
+  prompt.ts
+  transformations.ts
+  urls.ts
+```
+
+### `config.ts`
+
+- central Cloudinary SDK configuration
+- reads env vars once
+
+### `upload.ts`
+
+- uploads files to Cloudinary
+- returns normalized result payload
+
+### `prompt.ts`
+
+- converts UI selections into deterministic prompt strings
+
+### `transformations.ts`
+
+- builds transformation objects from prompt and orientation
+
+### `urls.ts`
+
+- converts `publicId + transformation` into a delivery URL
+
+## 8. Canonical Asset Reference
+
+The uploaded source image should be identified by `public_id`, not by the returned URL alone.
+
+### Why `public_id` is the right canonical reference
+
+- it is stable for future transformations
+- it allows one source upload to produce many derived results
+- it keeps regeneration logic simple
+- it fits Cloudinary's delivery model directly
+
+### Store both of these
+
+- `publicId`
+- `secureUrl`
+
+Use:
+
+- `secureUrl` for immediate source preview
+- `publicId` for all future generation and delivery logic
+
+## 9. Upload Response Shape
+
+The upload route should return a normalized payload similar to:
+
+```ts
+export type UploadedProductImage = {
   publicId: string;
   secureUrl: string;
   width: number;
@@ -125,258 +219,171 @@ type UploadedProductImage = {
 };
 ```
 
-### Generation input
+## 10. Generation Input Shape
 
-The dashboard state should be able to construct:
+The dashboard should eventually construct something like:
 
 ```ts
-type GenerationSettings = {
+export type GenerationSettings = {
   publicId: string;
   theme: 'minimal' | 'natural' | 'urban' | 'seasonal';
-  sceneIntensity: 'low' | 'medium' | 'high';
+  sceneRichness: 'minimal' | 'balanced' | 'rich';
   vibeContext: string;
   orientation: 'square' | 'portrait' | 'landscape';
 };
 ```
 
-### Suggested persistence model
+This naming matches the PRD more closely than the older `sceneIntensity` wording.
 
-When persistence is added for "My Shots", each saved generation record should include:
+## 11. Prompt Builder Strategy
+
+The prompt builder should transform UI choices into richer, product-safe language.
+
+### Example mappings
+
+- `minimal` theme -> `clean minimal lifestyle backdrop`
+- `natural` theme -> `natural organic commercial setting`
+- `urban` theme -> `modern editorial city-inspired environment`
+- `seasonal` theme -> `seasonally styled lifestyle environment`
+
+- `minimal` richness -> `subtle environmental detail`
+- `balanced` richness -> `balanced environmental detail`
+- `rich` richness -> `immersive environmental detail`
+
+### Prompt rules
+
+The final prompt builder should:
+
+- keep the product as the clear subject
+- avoid duplicate phrases
+- trim empty inputs
+- remain deterministic enough for a stable UX
+- avoid unsafe or overly open-ended prompt construction
+
+### Example output
+
+```text
+clean minimal lifestyle backdrop, balanced environmental detail, soft commercial lighting, realistic grounded shadows, product-centered composition, coffee shop morning
+```
+
+## 12. Transformation Strategy
+
+The current best-fit v1 strategy is:
+
+1. start from the uploaded source asset
+2. apply product-safe background workflow
+3. apply generative background replacement with prompt
+4. adapt to target aspect ratio
+5. optimize output delivery
+
+## Preferred first transformation family
+
+Use prompt-based background replacement as the primary creative step.
+
+Conceptually:
+
+```ts
+[
+  { effect: `gen_background_replace:prompt_${prompt}` },
+  { width, height, crop: 'fill' },
+  { fetch_format: 'auto', quality: 'auto' },
+]
+```
+
+Important note:
+
+The exact effect string and escaping rules must be verified during coding, but the currently documented Cloudinary transformation family supports this pattern.
+
+## Aspect-ratio support
+
+Recommended mappings:
+
+- `square` -> `1:1`
+- `portrait` -> `4:5`
+- `landscape` -> `16:9`
+
+If standard crop behavior harms composition, use generative fill for canvas expansion where appropriate.
+
+## 13. Practical Delivery Behavior
+
+Cloudinary derived assets are created when the transformation URL is first requested.
+
+For AdShot AI this means:
+
+- the first request may be slower
+- repeated requests to the same transformation URL should be faster
+- saved shots should reuse the stored transformed URL directly
+
+This makes persistence important:
+
+- if a generated shot is already known, do not rebuild it every time in the UI
+- store the final resolved delivery URL for later rendering
+
+## 14. Quota Integration
+
+Your monthly quota model should be enforced at the app layer, before a new result is requested.
+
+## Recommended rule
+
+Consume a monthly generation credit when:
+
+- the user clicks `Generate`
+- input validation passes
+- the app commits a new generation attempt
+
+Do not consume a credit when:
+
+- the user uploads a file
+- the user edits settings
+- the user reopens an already saved shot
+
+## Important separation of concerns
+
+- AdShot AI decides whether the user is allowed to initiate a new generation
+- Cloudinary performs the actual derived asset transformation when the URL is requested
+
+## 15. Suggested Persistence Model
+
+The current schema only covers users, sessions, accounts, verification, and quota.
+
+To support the Cloudinary workflow cleanly, add persistence for at least:
+
+### Source upload
+
+```ts
+type SourceAssetRecord = {
+  id: string;
+  userId: string;
+  publicId: string;
+  secureUrl: string;
+  width: number;
+  height: number;
+  format: string;
+  bytes: number;
+  createdAt: string;
+};
+```
+
+### Generated shot
 
 ```ts
 type ShotRecord = {
   id: string;
   userId: string;
+  sourceAssetId: string;
   sourcePublicId: string;
-  sourceSecureUrl: string;
+  transformedUrl: string;
+  prompt: string;
   theme: string;
-  sceneIntensity: string;
+  sceneRichness: string;
   vibeContext: string;
   orientation: string;
-  prompt: string;
-  transformedUrl: string;
+  visibility: 'private' | 'public';
   createdAt: string;
 };
 ```
 
-The critical fields are `sourcePublicId` and `prompt`.
-
-## Upload Flow Design
-
-### Step 1: User selects an image
-
-As soon as the user selects a file:
-
-- show a local preview immediately with `URL.createObjectURL(file)`
-- mark the image as `uploading`
-- begin the upload request in the background
-
-This improves perceived performance because the user sees progress instantly instead of waiting for Cloudinary first.
-
-### Step 2: Route handler validates and uploads
-
-The route handler should:
-
-1. verify the user session
-2. validate file type and size
-3. upload to Cloudinary
-4. return a minimal, UI-friendly payload
-
-Validation rules should include:
-
-- allow only images
-- define a max upload size
-- optionally normalize filenames or use a folder strategy per user
-
-### Step 3: UI swaps from local preview to Cloudinary-backed preview
-
-After upload succeeds:
-
-- keep showing the image without visual flicker
-- replace temporary local state with the Cloudinary-backed asset state
-- preserve `publicId` in the generation configuration store
-
-If upload fails:
-
-- preserve the selected file name in the UI
-- show an actionable error
-- allow retry without losing the rest of the form state
-
-## Prompt Construction Strategy
-
-The prompt should be built by combining:
-
-1. the selected theme
-2. the selected scene intensity
-3. the optional vibe context
-4. any product-safe framing rules we want to enforce
-
-### Recommended prompt builder behavior
-
-Translate user-friendly UI values into richer prompt language.
-
-Example mapping:
-
-- `minimal` -> `clean minimal lifestyle backdrop`
-- `natural` -> `natural organic setting with realistic materials`
-- `urban` -> `modern editorial city-inspired environment`
-- `seasonal` -> `seasonally styled lifestyle environment`
-
-Example scene intensity mapping:
-
-- `low` -> `subtle environmental detail`
-- `medium` -> `balanced environmental detail`
-- `high` -> `rich immersive environmental detail`
-
-### Example prompt output
-
-```text
-clean minimal lifestyle backdrop, balanced environmental detail, soft commercial lighting, product-centered composition, realistic grounded shadows, coffee shop morning
-```
-
-The final prompt builder should:
-
-- trim empty inputs
-- avoid duplicated phrases
-- keep the product as the subject
-- keep prompts deterministic enough for repeatable UX
-
-## Generation Flow Design
-
-### Important principle
-
-The `Generate` action in AdShot AI is mostly a **URL construction event** plus UI state change.
-
-### On generate click
-
-The app should:
-
-1. verify the user still has quota
-2. build the prompt string from the chosen settings
-3. build the Cloudinary transformation definition
-4. derive the transformation URL from the source `public_id`
-5. render the resulting image URL in the result pane
-
-### No second generation API call
-
-We do **not** need a traditional API endpoint like:
-
-- `POST /api/generate-image`
-
-Instead:
-
-- the client or server-rendered UI computes the Cloudinary delivery URL
-- the browser requests that URL
-- Cloudinary performs the AI transformation on first request
-
-### Working Cloudinary AI assumption for v1
-
-The most likely v1 transformation family is a background-generation or background-replacement transformation driven by prompt text.
-
-This document assumes a Cloudinary effect in the `gen_background_replace` / generative background family, with orientation sizing layered around it.
-
-The exact transformation string should be finalized against the chosen Cloudinary feature variant during implementation.
-
-## Transformation Composition
-
-Conceptually, the transformation pipeline should look like:
-
-1. start from the uploaded product asset
-2. apply background removal or product isolation if needed
-3. apply AI background generation or replacement using the composed prompt
-4. apply orientation-specific crop/pad rules
-5. apply output optimization such as `f_auto` and `q_auto`
-
-### Example conceptual transformation object
-
-```ts
-const transformation = [
-  {
-    effect: `gen_background_replace:prompt_${prompt}`,
-  },
-  {
-    width: targetWidth,
-    height: targetHeight,
-    crop: 'fill',
-  },
-  {
-    fetch_format: 'auto',
-    quality: 'auto',
-  },
-];
-```
-
-This is intentionally conceptual.
-
-During implementation we must verify:
-
-- exact transformation key names
-- prompt encoding rules
-- whether orientation is better handled with `fill`, `pad`, or generative fill
-- whether background removal should be its own explicit step
-
-## Orientation Rules
-
-Map UI orientation to predictable output targets:
-
-- `square` -> 1:1
-- `portrait` -> 4:5 or another product-approved portrait ratio
-- `landscape` -> 16:9 or another product-approved campaign ratio
-
-Recommended v1 behavior:
-
-- keep a central product composition
-- avoid aggressive cropping of the product itself
-- use generative fill or safe padding where possible if the chosen Cloudinary mode supports it
-
-## Caching and Derived Asset Behavior
-
-Cloudinary creates a derived asset when a new transformation is first requested.
-
-For AdShot AI this means:
-
-- first request can take longer
-- later requests for the same source + same transformation should be faster
-- repeated visits to a saved shot can reuse the same transformed URL
-
-This is a core reason to persist the final transformed URL and the transformation inputs.
-
-### Practical implication
-
-If a user opens "My Shots", we should not recompute prompts in the UI if the exact transformed URL was already saved. We can simply render the saved URL.
-
-## Quota and Credit Consumption
-
-AdShot AI already has a monthly generation quota model:
-
-- 5 generations per user per month
-
-For this Cloudinary flow, a generation should be counted when the user intentionally requests a new derived creative result.
-
-### Recommended rule
-
-Consume quota when:
-
-- the user clicks `Generate`
-- validation passes
-- a new Cloudinary transformation URL is committed for rendering
-
-Do **not** consume quota when:
-
-- the user uploads an image
-- the user edits settings without generating
-- the same already-saved generated result is merely reopened
-
-### Important implementation note
-
-Because the transformation happens on delivery, app-level quota tracking and Cloudinary delivery timing are separate concerns.
-
-That means:
-
-- AdShot AI controls whether the user is allowed to initiate a new generation
-- Cloudinary controls when the derived asset is actually created on first request
-
-## Recommended UX States
+## 16. UX States to Support
 
 ### Upload states
 
@@ -388,109 +395,123 @@ That means:
 ### Generation states
 
 - `ready`
+- `checkingQuota`
 - `buildingPrompt`
 - `rendering`
 - `loaded`
 - `error`
 
-### UX guidance
-
-- show the uploaded source image immediately
-- disable `Generate` until upload completes
-- keep the configuration form editable while preview is shown
-- show a clear loading treatment in the result stage
-- distinguish upload errors from generation errors
-
-## Error Handling
+## 17. Error Handling
 
 ### Upload errors
 
 Handle:
 
 - invalid mime type
-- oversized files
-- unauthenticated access
+- file too large
+- unauthenticated request
 - Cloudinary upload failure
 
-### Transformation errors
+### Generation errors
 
 Handle:
 
 - invalid transformation syntax
-- unsupported AI effect parameters
+- unsupported effect params
 - prompt encoding issues
-- Cloudinary delivery errors
+- Cloudinary delivery failures
 
-Cloudinary can expose transformation problems through the `X-Cld-Error` response header. That is useful when debugging broken transformation URLs.
+Cloudinary may expose delivery issues through response metadata such as `X-Cld-Error`, which is useful during debugging.
 
-## Security and Validation
+## 18. Security Rules
 
-### Server-side responsibilities
+Keep these server-only:
 
-Keep these on the server only:
+- `CLOUDINARY_API_SECRET`
+- upload logic
+- auth checks
+- validation rules
 
-- Cloudinary API secret usage
-- upload authentication
-- file validation
-- folder naming strategy
+Safe to expose client-side:
 
-### Client-safe data
-
-Safe to expose to the client:
-
-- `public_id`
-- `secure_url`
-- transformed delivery URLs
 - cloud name
+- source `publicId`
+- `secureUrl`
+- derived delivery URLs
 
-### Folder strategy recommendation
+## 19. Folder Strategy
 
-Use a stable folder convention such as:
+Recommended source upload folder convention:
 
 ```text
 adshot-ai/users/{userId}/source
 ```
 
-This makes later asset management and cleanup easier.
+Possible future generated asset strategy:
 
-## Suggested Repo-Level Implementation Plan
+```text
+adshot-ai/users/{userId}/generated
+```
 
-### Phase 1: Cloudinary foundation
+Even if generated assets are mostly derived-on-delivery, keeping a clear folder policy will help if you later choose to persist specific generated outputs more aggressively.
 
-1. Add Cloudinary packages.
-2. Add env vars.
-3. Create `lib/cloudinary/` helpers.
-4. Add Cloudinary hostname support to `next.config.ts`.
+## 20. Recommended Implementation Phases
 
-### Phase 2: Upload pipeline
+## Phase 1 - Foundation
 
-1. Create `app/api/uploads/product-image/route.ts`.
-2. Validate auth and file payload.
-3. Upload original image to Cloudinary.
-4. Return normalized upload metadata.
+1. Install `cloudinary`
+2. Optionally install `next-cloudinary`
+3. Add env vars
+4. Add `lib/cloudinary/` helpers
+5. Add Cloudinary hostname support to `next.config.ts`
 
-### Phase 3: Dashboard state
+## Phase 2 - Upload
 
-1. Add dashboard upload state.
-2. Store the selected image `publicId`.
-3. Store configuration values.
-4. Build a prompt helper from PRD settings.
+1. Create `app/api/uploads/product-image/route.ts`
+2. Validate auth
+3. Validate image payload
+4. Upload to Cloudinary
+5. Return normalized metadata
 
-### Phase 4: Generation rendering
+## Phase 3 - Dashboard wiring
 
-1. Build a transformation URL helper from `publicId + settings`.
-2. Render generated output with Cloudinary delivery.
-3. Add result loading and error states.
+1. Add product upload UI
+2. Store uploaded asset metadata in client state
+3. Add generation settings form
+4. Add prompt builder
 
-### Phase 5: Persistence
+## Phase 4 - Generation rendering
 
-1. Save generation settings and output URL to the database.
-2. Connect the saved records to "My Shots".
-3. Reuse the stored transformed URL for later viewing.
+1. Build transformation object
+2. Generate Cloudinary delivery URL
+3. Render result preview
+4. Handle Cloudinary error states
 
-## Suggested Files for This Repo
+## Phase 5 - Persistence and productization
 
-The current repo structure suggests these additions:
+1. Save source uploads
+2. Save generated shots
+3. Build My Shots
+4. Convert gallery to public saved shots
+
+## 21. Environment Variables
+
+Expected env vars:
+
+```env
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=
+```
+
+Optional later:
+
+```env
+CLOUDINARY_UPLOAD_PRESET=
+```
+
+## 22. Suggested Files To Add
 
 ```text
 app/
@@ -504,6 +525,7 @@ components/
     ProductUploadField.tsx
     GenerationSettingsForm.tsx
     GeneratedShotPreview.tsx
+    UsageQuotaCard.tsx
 
 lib/
   cloudinary/
@@ -512,65 +534,31 @@ lib/
     transformations.ts
     upload.ts
     urls.ts
-  stores/
-    use-studio-store.ts
+  quota/
+    get-user-quota.ts
+    consume-generation-credit.ts
+    reset-user-quota-if-needed.ts
 ```
 
-Possible future persistence additions:
+## 23. Final Recommendation
 
-```text
-app/
-  (dashboard)/
-    dashboard/
-      actions.ts
-```
+The best v1 implementation path is:
 
-## Environment Variables
+- upload product images through a protected route handler
+- store Cloudinary `public_id` as the canonical source reference
+- build prompts from PRD settings
+- generate results by constructing Cloudinary AI transformation URLs
+- render those derived URLs in the dashboard
+- enforce the 5-generation monthly quota at the application layer
+- save successful results for My Shots and the future public gallery
 
-Expected variables for v1:
+This gives AdShot AI a real end-to-end MVP path without introducing a separate generation backend or extra model orchestration cost.
 
-```env
-CLOUDINARY_CLOUD_NAME=
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=
-```
+## 24. References Reviewed
 
-If we later move to direct signed browser uploads, we may also add:
-
-```env
-CLOUDINARY_UPLOAD_PRESET=
-```
-
-## Open Decisions for Implementation
-
-These items are still implementation details, not product blockers:
-
-1. Whether v1 uses `next-cloudinary` or only the core Cloudinary SDK plus manual URL generation.
-2. Whether background removal is a separate explicit transformation or fully handled inside the selected generative background workflow.
-3. The exact aspect ratios for portrait and landscape outputs.
-4. Whether the app persists only successful generated outputs or also saves generation attempts.
-
-## Final Recommendation
-
-For AdShot AI v1:
-
-- upload original product images through a protected Next.js Route Handler
-- store `public_id` as the canonical image reference
-- show the uploaded image immediately after upload
-- build prompts from `theme + sceneIntensity + vibeContext + orientation`
-- generate final outputs by constructing Cloudinary AI transformation URLs
-- render those URLs directly in the result UI
-- persist both the generation inputs and the resolved transformed URL for reuse in "My Shots"
-
-This architecture matches the current product direction, works with the monthly quota model already documented in this repo, and keeps the generation flow simple by leaning into Cloudinary's derived asset delivery model.
-
-## References
-
-- Cloudinary Node quickstart: https://cloudinary.com/documentation/node_quickstart
-- Cloudinary generative AI transformations: https://cloudinary.com/documentation/generative_ai_transformations
-- Cloudinary transformation URL reference: https://cloudinary.com/documentation/transformation_reference
-- Cloudinary solution overview and delivery lifecycle: https://cloudinary.com/documentation/solution_overview
-- Cloudinary Next.js quick start: https://cloudinary.com/documentation/nextjs_quick_start
-- Next.js 16 route handlers guide: `node_modules/next/dist/docs/01-app/01-getting-started/15-route-handlers.md`
-- Next.js 16 mutating data guide: `node_modules/next/dist/docs/01-app/01-getting-started/07-mutating-data.md`
+- Cloudinary generative AI transformations
+- Cloudinary effects and artistic enhancements
+- Cloudinary transformation URL reference
+- Cloudinary Node.js SDK upload and URL-generation guidance
+- `next-cloudinary` `CldImage` and `getCldImageUrl` usage patterns
+- Next.js 16 Route Handlers guide from `node_modules/next/dist/docs/01-app/01-getting-started/15-route-handlers.md`
