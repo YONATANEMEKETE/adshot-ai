@@ -40,13 +40,12 @@ export default function DashboardSidebar() {
 
   return (
     <aside className="flex w-full shrink-0 flex-row items-center justify-between gap-4 px-4 py-3 md:sticky md:top-0 md:h-[100dvh] md:w-24 md:flex-col md:px-0 md:py-4">
-      <Link
-        href="/dashboard"
+      <div
         className="inline-flex size-12 items-center justify-center rounded-sm bg-background text-foreground shadow-md"
-        aria-label="Go to dashboard home"
+        aria-hidden="true"
       >
         <Logo size={28} className="text-background" aria-hidden="true" />
-      </Link>
+      </div>
 
       <nav
         aria-label="Dashboard"
