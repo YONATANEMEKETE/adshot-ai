@@ -8,7 +8,7 @@ import {
   RiSparkling2Line,
 } from '@remixicon/react';
 
-import DashboardUserAvatar from '@/components/dashboard/DashboardUserAvatar';
+import DashboardUserMenu from '@/components/dashboard/DashboardUserMenu';
 import Logo from '@/components/shared/Logo';
 import {
   Tooltip,
@@ -62,7 +62,7 @@ export default function DashboardSidebar() {
                   <TooltipTrigger render={<Link href={item.href} />}>
                     <span
                       className={cn(
-                        'group flex size-12 items-center justify-center rounded-[calc(var(--radius)+0.35rem)] border bg-card shadow-sm transition-all duration-200 hover:shadow-md',
+                        'group flex size-12 items-center justify-center rounded-sm border bg-card shadow-sm transition-all duration-200 hover:shadow-md',
                         isActive
                           ? 'translate-x-1.5 border-primary bg-primary text-primary-foreground shadow-md hover:border-primary hover:bg-primary hover:text-primary-foreground'
                           : 'border-border text-muted-foreground hover:translate-x-0.5 hover:border-primary/35 hover:bg-primary/8 hover:text-primary',
@@ -90,7 +90,7 @@ export default function DashboardSidebar() {
         </ul>
       </nav>
 
-      <DashboardUserAvatar />
+      <DashboardUserMenu />
     </aside>
   );
 }
